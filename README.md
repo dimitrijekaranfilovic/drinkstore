@@ -23,6 +23,7 @@ Administrator ne može da naručuje niti ocjenjuje, ali može da dodaje pića u 
 Piće će imati minimum sledeće podatke:
  * naziv
  * slika
+ * opis
  * zapremina
  * procenat alkohola
  * prosječna ocjena
