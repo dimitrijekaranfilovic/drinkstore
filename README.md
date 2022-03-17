@@ -47,7 +47,7 @@ Sistem je zasnovan na mikroservisnoj arhitekturi.
 |Naziv komponente|Opis|Tehnologije|
 |----------------|----|-----------|
 |**Frontend aplikacija**|Monolitna frontend aplikacija sa svim funkcionalnostima|VueJS|
-|**API gateway**|api gateway za mikroservise|Apache APISIX ili Python Django ili SpringBoot|
+|**API gateway**|api gateway za mikroservise|Java, Spring Boot|
 
 
 
