@@ -1,4 +1,4 @@
-# alkostore
+# drinkstore
 Predmetni projekat iz Naprednih tehnologija programiranja.
 
 ## Student
@@ -7,7 +7,7 @@ Predmetni projekat iz Naprednih tehnologija programiranja.
 |Dimitrije|Karanfilović|SW-39/2018|
 
 ## Opis sistema
-Sistem je namijenjen pretrazi, ocjenjivanju i naručivanju alkoholnih pića. 
+Sistem je namijenjen pretrazi, ocjenjivanju i naručivanju pića. 
 
 ## Funkcionalnosti
 Sistem sadrži tri kategorije korisnika:
@@ -27,7 +27,6 @@ Piće će imati minimum sledeće podatke:
  * slika
  * opis
  * zapremina
- * procenat alkohola
  * prosječna ocjena
  * komentari
 
