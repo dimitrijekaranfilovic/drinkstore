@@ -1,31 +1,6 @@
 <template>
   <v-container>
-    <!-- <main-page-search-sort-bar
-      :searchParams="searchParams"
-      @searchEvent="search"
-    /> -->
-    <!-- <v-row dense align="center">
-      <v-col v-for="drink in drinks.slice(0, 3)" :key="drink.id">
-        <drink-card :drink="drink" />
-      </v-col>
-    </v-row> -->
-    <!-- <b-row class="row-spacing" v-for="(row, rowI) in numRows" :key="rowI">
-        <b-col
-          v-bind:lg="cardWidth"
-          sm="12"
-          v-for="(s, index) in stocksPage.content.slice(
-            rowI * numCols,
-            rowI * numCols + numCols
-          )"
-          :key="index"
-        >
-          <MedicineStockCard
-            v-bind:stock="s"
-            :image="getMedicineImage(s)"
-            :key="s.id"
-          />
-        </b-col>
-      </b-row> -->
+    <search-filter-drinks :searchParams="searchParams" />
     <v-row dense v-for="(row, rowI) in numRows" :key="rowI">
       <v-col
         v-for="(drink, drinkIndex) in drinks.slice(
@@ -46,13 +21,19 @@
 
 <script>
 import DrinkCard from "../cards/DrinkCard.vue";
+import SearchFilterDrinks from "../SearchFilterDrinks.vue";
 export default {
   name: "Index",
-  components: { DrinkCard },
+  components: { DrinkCard, SearchFilterDrinks },
   data: () => {
     return {
+      searchParams: {
+        query: "",
+        sortCriteria: "name",
+        sortDirection: "asc",
+      },
       numRows: 2,
-      numCols: 4,
+      numCols: 5,
       drinks: [
         {
           id: 1,

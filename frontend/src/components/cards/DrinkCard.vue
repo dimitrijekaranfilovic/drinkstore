@@ -1,13 +1,12 @@
 <template>
   <v-card
     class="mx-auto my-12 drink-card"
-    width="374"
-    max-width="374"
-    @click="redirectToDrink"
+    width="300"
+    max-width="300"
     elevation="4"
   >
     <v-img
-      height="250"
+      height="200"
       src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
     ></v-img>
     <v-card-title
@@ -19,7 +18,7 @@
     </v-card-title>
 
     <v-card-actions class="pa-4">
-      <span class="avg-grade">Average rating:</span>
+      <span class="avg-grade">Rating:</span>
       <v-spacer></v-spacer>
       <span class="text--lighten-2 text-caption mr-2"> (1.1) </span>
       <v-rating
