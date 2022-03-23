@@ -6,14 +6,17 @@
     elevation="4"
   >
     <v-img
-      height="200"
-      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+      height="300"
+      src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Rubinov_vinjak.jpg"
     ></v-img>
     <v-card-title
       >{{ drink.name }}
 
       <v-chip class="ma-2" color="secondary" outlined>
         {{ drink.volume }}{{ drink.volumeMark }}
+      </v-chip>
+      <v-chip :color="drinkCategoryChipColor" text-color="white">
+        {{ drink.category | capitalize | removeUnderscore }}
       </v-chip>
     </v-card-title>
 
@@ -38,9 +41,17 @@
       {{ drink.description }}
     </v-card-text>
     <v-card-actions>
-      <v-btn color="primary">Add to cart</v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn color="primary" dark v-bind="attrs" v-on="on" rounded>
+            <v-icon> mdi-cart </v-icon>
+          </v-btn>
+        </template>
+        <span>Add to cart</span>
+      </v-tooltip>
+
       <v-btn color="primary lighten-2" text @click="redirectToDrink">
-        View drink
+        Details
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -53,6 +64,24 @@ export default {
   methods: {
     redirectToDrink() {
       console.log(`REDIRECT TO DRINK ${this.drink.id}`);
+    },
+  },
+  computed: {
+    drinkCategoryChipColor() {
+      switch (this.drink.category) {
+        case "LIQUOR":
+          return "grey";
+        case "WINE":
+          return "#4d062f";
+        case "BEER":
+          return "#bd7e00";
+        case "CARBONATED":
+          return "blue";
+        case "NON_CARBONATED":
+          return "#bfba21";
+        default:
+          return "red";
+      }
     },
   },
 };

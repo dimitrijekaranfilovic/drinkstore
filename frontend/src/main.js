@@ -5,6 +5,10 @@ import vuetify from "./plugins/vuetify";
 import VueToast from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 
+//filters
+import "./filters/capitalizeFilter";
+import "./filters/removeUnderscoreFilter";
+
 Vue.use(VueToast);
 Vue.config.productionTip = false;
 

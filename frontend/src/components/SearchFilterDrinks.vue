@@ -1,89 +1,119 @@
 <template>
   <v-container>
     <v-row class="search-bar">
-      <v-col cols="8">
+      <v-col cols="12" md="8">
         <v-text-field
           label="Enter keyword"
           v-model="searchParams.query"
         ></v-text-field>
       </v-col>
-      <v-col cols="2">
+      <v-col cols="12" md="4">
         <v-btn color="primary" class="search-btn" @click="emitSearchEvent()"
           >Search</v-btn
         >
-      </v-col>
-      <v-col cols="2" align="right">
-        <v-btn @click="drawer = !drawer" class="search-btn">
+        <v-btn @click="dialog = !dialog" class="search-btn">
           <v-icon> mdi-filter </v-icon>
           Filters
         </v-btn>
       </v-col>
-      <!-- <v-spacer /> -->
-      <!-- <v-col cols="6" md="3">
-      <v-select
-        label="Sort by"
-        :items="sortOptions"
-        v-model="searchParams.sortCriteria"
-        item-text="name"
-        item-value="value"
-        @change="emitSearchEvent()"
-      ></v-select>
-    </v-col>
-    <v-col cols="6" md="1">
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            elevation="1"
-            class="direction-btn"
-            v-bind="attrs"
-            v-on="on"
-            hint="Sorting direction"
-            @click="changeSortingDirection()"
-          >
-            <v-icon>
-              {{
-                searchParams.sortDirection === "asc"
-                  ? "mdi-sort-numeric-ascending"
-                  : "mdi-sort-numeric-descending"
-              }}
-            </v-icon>
-          </v-btn>
-        </template>
-        <span>Sorting direction</span>
-      </v-tooltip>
-    </v-col> -->
     </v-row>
-    <v-row dense>
-      <v-navigation-drawer
-        v-model="drawer"
-        absolute
-        temporary
-        width="400"
-        right
+    <div class="dialogs">
+      <v-dialog
+        width="50%"
+        v-model="dialog"
+        hide-overlay
+        transition="dialog-bottom-transition"
       >
-        <v-card elevation="4">
-          <v-card-title>
-            Filters
+        <v-card>
+          <v-toolbar dark color="primary">
+            <v-toolbar-title>
+              Filters
+              <v-icon> mdi-filter </v-icon>
+            </v-toolbar-title>
             <v-spacer></v-spacer>
-
-            <v-btn :ripple="false" elevation="0" @click="drawer = false">
-              <v-icon> mdi-close </v-icon>
+            <v-btn icon dark @click="dialog = false">
+              <v-icon>mdi-close</v-icon>
             </v-btn>
-          </v-card-title>
-          <v-card-text> </v-card-text>
+          </v-toolbar>
+
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    label="From grade"
+                    type="number"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    v-model="searchParams.gradeFrom"
+                  />
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    label="To grade"
+                    type="number"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    hide-details
+                    v-model="searchParams.gradeTo"
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12">
+                  <v-select
+                    v-model="searchParams.categories"
+                    :items="categories"
+                    item-text="text"
+                    item-value="value"
+                    label="Category"
+                    multiple
+                    chips
+                    deletable-chips
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
         </v-card>
-      </v-navigation-drawer>
-    </v-row>
+      </v-dialog>
+    </div>
   </v-container>
 </template>
 
 <script>
+//TODO: mozda dodaj neke napredne filtere za poredjenje zapremine
+//TODO: dodaj ono za najprodavanije, ali to mozda na zasebnu stranicu sa drugacijim karticama
 export default {
   name: "SearchFilterDrinks",
   props: ["searchParams"],
   data: () => {
     return {
-      drawer: false,
+      dialog: false,
+      categories: [
+        {
+          text: "Liquor",
+          value: "LIQUOR",
+        },
+        {
+          text: "Beer",
+          value: "BEER",
+        },
+        {
+          text: "Wine",
+          value: "WINE",
+        },
+        {
+          text: "Carbonated",
+          value: "CARBONATED",
+        },
+        {
+          text: "Non carbonated",
+          value: "NON_CARBONATED",
+        },
+      ],
       sortOptions: [
         {
           name: "Name",
