@@ -25,7 +25,7 @@ const routes = [
     component: () => import("../views/IndexView.vue"),
   },
 ];
-
+//TODO: dodati redirekt sa Home stranice na login ili index u zavisnosti od toga da li je korisnik ulogovan
 const router = new VueRouter({
   routes,
   mode: "history",
