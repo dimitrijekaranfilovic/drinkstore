@@ -2,6 +2,7 @@
   <v-container>
     <v-row class="search-bar">
       <v-col cols="12" md="8">
+        <!--ovo gleda i naziv i opis i mozda da ih na bekendu rangiram po relevantnosti-->
         <v-text-field
           label="Enter keyword"
           v-model="searchParams.query"
