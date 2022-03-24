@@ -1,6 +1,9 @@
 <template>
   <v-container>
-    <search-filter-drinks :searchParams="searchParams" />
+    <search-filter-drinks
+      :searchParams="searchParams"
+      @searchParamsUpdated="search"
+    />
     <v-row dense v-for="(row, rowI) in numRows" :key="rowI">
       <v-col
         v-for="(drink, drinkIndex) in drinks.slice(
@@ -31,8 +34,8 @@ export default {
         query: "",
         sortCriteria: "name",
         sortDirection: "asc",
-        gradeFrom: 0,
-        gradeTo: 5,
+        ratingFrom: 0,
+        ratingTo: 5,
         categories: ["LIQUOR", "WINE", "BEER", "CARBONATED", "NON_CARBONATED"],
       },
       numRows: 1,
@@ -86,6 +89,16 @@ export default {
       ],
       page: 1,
     };
+  },
+  methods: {
+    search() {
+      console.log(this.searchParams);
+    },
+  },
+  watch: {
+    page(newPage) {
+      console.log(newPage);
+    },
   },
 };
 </script>

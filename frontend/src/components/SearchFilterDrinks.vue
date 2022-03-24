@@ -9,7 +9,10 @@
         ></v-text-field>
       </v-col>
       <v-col cols="12" md="4">
-        <v-btn color="primary" class="search-btn" @click="emitSearchEvent()"
+        <v-btn
+          color="primary"
+          class="search-btn"
+          @click="$emit('searchParamsUpdated')"
           >Search</v-btn
         >
         <v-btn @click="dialog = !dialog" class="search-btn">
@@ -42,23 +45,23 @@
               <v-row>
                 <v-col cols="12" md="6">
                   <v-text-field
-                    label="From grade"
+                    label="From rating"
                     type="number"
                     min="0"
                     max="5"
                     step="0.1"
-                    v-model="searchParams.gradeFrom"
+                    v-model="searchParams.ratingFrom"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field
-                    label="To grade"
+                    label="To rating"
                     type="number"
                     min="0"
                     max="5"
                     step="0.1"
                     hide-details
-                    v-model="searchParams.gradeTo"
+                    v-model="searchParams.ratingTo"
                   />
                 </v-col>
               </v-row>
@@ -76,8 +79,35 @@
                   />
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-select
+                    label="Sort by"
+                    :items="sortOptions"
+                    item-text="text"
+                    item-value="value"
+                    v-model="searchParams.sortCriteria"
+                  />
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-select
+                    label="Direction"
+                    :items="sortDirections"
+                    item-text="text"
+                    item-value="value"
+                    v-model="searchParams.sortDirection"
+                    :append-outer-icon="sortIcon"
+                  />
+                </v-col>
+              </v-row>
             </v-container>
           </v-card-text>
+          <v-card-actions>
+            <v-btn @click="dialog = false">Cancel</v-btn>
+            <v-btn color="primary" @click="$emit('searchParamsUpdated')"
+              >Apply</v-btn
+            >
+          </v-card-actions>
         </v-card>
       </v-dialog>
     </div>
@@ -117,30 +147,35 @@ export default {
       ],
       sortOptions: [
         {
-          name: "Name",
+          text: "Name",
           value: "name",
         },
         {
-          name: "Date created",
-          value: "dateCreated",
+          text: "Rating",
+          value: "rating",
+        },
+        {
+          text: "Category",
+          value: "category",
+        },
+      ],
+      sortDirections: [
+        {
+          text: "ascending",
+          value: "asc",
+        },
+        {
+          text: "descending",
+          value: "desc",
         },
       ],
     };
   },
-  methods: {
-    emitSearchEvent() {
-      this.$emit("searchParamsUpdated");
-    },
-    changeSortingDirection() {
-      this.searchParams.sortDirection =
-        this.searchParams.sortDirection === "asc" ? "desc" : "asc";
-      this.emitSearchEvent();
-    },
-  },
-  watch: {
-    page: (newPage) => {
-      // console.log(newPage);
-      // TODO: ovdje pozovi metodu za dobavljanje kolekcija
+  computed: {
+    sortIcon() {
+      if (this.searchParams.sortDirection === "desc")
+        return "mdi-sort-alphabetical-descending";
+      else return "mdi-sort-alphabetical-ascending";
     },
   },
 };

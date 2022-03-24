@@ -14,6 +14,23 @@
         drinkstore
       </span>
     </div>
+    <v-spacer />
+    <div>
+      <v-btn color="primary" depressed>
+        <v-icon> mdi-home </v-icon>
+        Home
+      </v-btn>
+      <v-btn color="primary" depressed>
+        <v-icon> mdi-chart-areaspline </v-icon>
+        Most sold
+      </v-btn>
+    </div>
+    <v-spacer />
+    <!--dodaj v-if-->
+    <v-btn color="primary" depressed>
+      Log Out
+      <v-icon> mdi-logout </v-icon>
+    </v-btn>
   </v-app-bar>
 </template>
 
