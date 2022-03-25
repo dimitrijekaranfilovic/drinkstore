@@ -20,9 +20,9 @@ const routes = [
     component: () => import("../views/RegisterView.vue"),
   },
   {
-    path: "/index",
-    name: "Index",
-    component: () => import("../views/IndexView.vue"),
+    path: "/most-sold",
+    name: "MostSold",
+    component: () => import("../views/MostSoldView.vue"),
   },
 ];
 //TODO: dodati redirekt sa Home stranice na login ili index u zavisnosti od toga da li je korisnik ulogovan

@@ -6,11 +6,12 @@
     elevation="4"
   >
     <v-img
-      height="300"
+      height="275"
       src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Rubinov_vinjak.jpg"
     ></v-img>
     <v-card-title
-      >{{ drink.name }}
+      ><span v-if="index !== undefined">{{ index + 1 }}. </span>
+      {{ drink.name }}
 
       <v-chip class="ma-2" color="secondary" outlined>
         {{ drink.volume }}{{ drink.volumeMark }}
@@ -20,7 +21,15 @@
       </v-chip>
     </v-card-title>
 
-    <v-card-actions class="pa-4">
+    <v-chip
+      v-if="index !== undefined"
+      color="green"
+      text-color="white"
+      class="ma-2"
+    >
+      Sales: <strong> {{ drink.numberOfSales }}</strong>
+    </v-chip>
+    <v-card-actions>
       <span class="avg-grade">Rating:</span>
       <v-spacer></v-spacer>
       <span class="text--lighten-2 text-caption mr-2"> (1.1) </span>
@@ -58,9 +67,11 @@
 </template>
 
 <script>
+import { categories } from "../../util/categories";
+
 export default {
   name: "DrinkCard",
-  props: ["drink"],
+  props: ["drink", "index"],
   methods: {
     redirectToDrink() {
       console.log(`REDIRECT TO DRINK ${this.drink.id}`);
@@ -68,20 +79,7 @@ export default {
   },
   computed: {
     drinkCategoryChipColor() {
-      switch (this.drink.category) {
-        case "LIQUOR":
-          return "grey";
-        case "WINE":
-          return "#4d062f";
-        case "BEER":
-          return "#bd7e00";
-        case "CARBONATED":
-          return "blue";
-        case "NON_CARBONATED":
-          return "#bfba21";
-        default:
-          return "red";
-      }
+      return categories.find((c) => c.value === this.drink.category).color;
     },
   },
 };
@@ -100,5 +98,9 @@ export default {
 .avg-grade {
   color: rgba(0, 0, 0, 0.6);
   font-size: 14px;
+}
+
+.no-bottom-margin {
+  margin-bottom: 5px !important;
 }
 </style>

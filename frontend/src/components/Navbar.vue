@@ -2,7 +2,7 @@
   <v-app-bar app color="primary" dark>
     <div
       class="d-flex align-center home-icon"
-      @click="$router.push({ name: 'Home' })"
+      @click="redirect({ name: 'Home' }, '/')"
     >
       <v-icon> mdi-bottle-wine </v-icon>
 
@@ -16,11 +16,15 @@
     </div>
     <v-spacer />
     <div>
-      <v-btn color="primary" depressed>
+      <v-btn @click="redirect({ name: 'Home' }, '/')" color="primary" depressed>
         <v-icon> mdi-home </v-icon>
         Home
       </v-btn>
-      <v-btn color="primary" depressed>
+      <v-btn
+        @click="redirect({ name: 'MostSold' }, '/most-sold')"
+        color="primary"
+        depressed
+      >
         <v-icon> mdi-chart-areaspline </v-icon>
         Most sold
       </v-btn>
@@ -37,6 +41,11 @@
 <script>
 export default {
   name: "Navbar",
+  methods: {
+    redirect(routeObject, disabledPath) {
+      if (this.$route.path !== disabledPath) this.$router.push(routeObject);
+    },
+  },
 };
 </script>
 

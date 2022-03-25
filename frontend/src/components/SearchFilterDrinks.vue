@@ -6,6 +6,7 @@
         <v-text-field
           label="Enter keyword"
           v-model="searchParams.query"
+          clearable
         ></v-text-field>
       </v-col>
       <v-col cols="12" md="4">
@@ -117,34 +118,14 @@
 <script>
 //TODO: mozda dodaj neke napredne filtere za poredjenje zapremine
 //TODO: dodaj ono za najprodavanije, ali to mozda na zasebnu stranicu sa drugacijim karticama
+import { categories } from "../util/categories";
 export default {
   name: "SearchFilterDrinks",
   props: ["searchParams"],
   data: () => {
     return {
       dialog: false,
-      categories: [
-        {
-          text: "Liquor",
-          value: "LIQUOR",
-        },
-        {
-          text: "Beer",
-          value: "BEER",
-        },
-        {
-          text: "Wine",
-          value: "WINE",
-        },
-        {
-          text: "Carbonated",
-          value: "CARBONATED",
-        },
-        {
-          text: "Non carbonated",
-          value: "NON_CARBONATED",
-        },
-      ],
+      categories: categories,
       sortOptions: [
         {
           text: "Name",
@@ -171,6 +152,7 @@ export default {
       ],
     };
   },
+  methods: {},
   computed: {
     sortIcon() {
       if (this.searchParams.sortDirection === "desc")

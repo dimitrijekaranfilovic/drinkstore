@@ -1,9 +1,18 @@
 <template>
   <v-container>
-    <search-filter-drinks
-      :searchParams="searchParams"
-      @searchParamsUpdated="search"
-    />
+    <v-row>
+      <v-card>
+        <v-card-title>Most sold</v-card-title>
+        <v-card-text>
+          <v-chip-group active-class="primary--text" mandatory v-model="chip">
+            <v-chip> Last 24 hours </v-chip>
+            <v-chip> Last week </v-chip>
+            <v-chip> Last month </v-chip>
+            <v-chip> Last year </v-chip>
+          </v-chip-group>
+        </v-card-text>
+      </v-card>
+    </v-row>
     <v-row dense v-for="(row, rowI) in numRows" :key="rowI">
       <v-col
         v-for="(drink, drinkIndex) in drinks.slice(
@@ -12,7 +21,8 @@
         )"
         :key="drinkIndex"
       >
-        <drink-card :drink="drink" :key="drink.id" />
+        <!-- <drink-card :drink="drink" :key="drink.id" /> -->
+        <drink-card :drink="drink" :key="drink.id" :index="drinkIndex" />
       </v-col>
     </v-row>
     <div class="text-center">
@@ -24,20 +34,14 @@
 
 <script>
 import DrinkCard from "../cards/DrinkCard.vue";
-import SearchFilterDrinks from "../SearchFilterDrinks.vue";
+
 export default {
-  name: "Index",
-  components: { DrinkCard, SearchFilterDrinks },
+  components: { DrinkCard },
+  name: "MostSold",
   data: () => {
     return {
-      searchParams: {
-        query: "",
-        sortCriteria: "name",
-        sortDirection: "asc",
-        ratingFrom: 0,
-        ratingTo: 5,
-        categories: ["LIQUOR", "WINE", "BEER", "CARBONATED", "NON_CARBONATED"],
-      },
+      page: 1,
+      chip: 0,
       numRows: 1,
       numCols: 5,
       drinks: [
@@ -49,6 +53,7 @@ export default {
           volumeMark: "l",
           averageGrade: 4.8,
           category: "LIQUOR",
+          numberOfSales: 100,
         },
         {
           id: 2,
@@ -58,6 +63,7 @@ export default {
           volumeMark: "l",
           averageGrade: 4.8,
           category: "WINE",
+          numberOfSales: 99,
         },
         {
           id: 3,
@@ -67,38 +73,10 @@ export default {
           volumeMark: "l",
           averageGrade: 4.8,
           category: "BEER",
-        },
-        {
-          id: 4,
-          name: "Koka kola",
-          description: "Opis",
-          volume: 0.75,
-          volumeMark: "l",
-          averageGrade: 4.8,
-          category: "CARBONATED",
-        },
-        {
-          id: 5,
-          name: "Multivitamin",
-          description: "Opis",
-          volume: 0.75,
-          volumeMark: "l",
-          averageGrade: 4.8,
-          category: "NON_CARBONATED",
+          numberOfSales: 98,
         },
       ],
-      page: 1,
     };
-  },
-  methods: {
-    search() {
-      console.log(this.searchParams);
-    },
-  },
-  watch: {
-    page(newPage) {
-      console.log(newPage);
-    },
   },
 };
 </script>
