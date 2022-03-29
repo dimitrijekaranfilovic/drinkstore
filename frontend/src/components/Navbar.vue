@@ -30,20 +30,65 @@
       </v-btn>
     </div>
     <v-spacer />
-    <!--dodaj v-if-->
-    <v-btn color="primary" depressed>
-      Log Out
-      <v-icon> mdi-logout </v-icon>
-    </v-btn>
+    <!--mozda ovo stavi u neki dropdown, koji ce imati tekst options ako nije ulogovan, a username ako jeste-->
+
+    <v-menu offset-y v-model="menu">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn color="primary" depressed v-bind="attrs" v-on="on">
+          {{ dropdownText }}
+          <v-icon v-if="menu">
+            mdi-chevron-up-circle-outline
+            <!-- mdi-arrow-up-drop-circle-outline -->
+          </v-icon>
+          <v-icon v-else>
+            mdi-chevron-down-circle-outline
+            <!-- mdi-arrow-down-drop-circle-outline -->
+          </v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item-group>
+          <v-list-item>
+            <v-icon color="primary"> mdi-clipboard-account-outline </v-icon>
+            <v-list-item-content>
+              <v-list-item-title>Login</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-icon color="primary"> mdi-account-plus </v-icon>
+            <v-list-item-content>
+              <v-list-item-title>Register</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item>
+            <v-icon color="black"> mdi-logout </v-icon>
+            <v-list-item-content>
+              <v-list-item-title>Log out</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-menu>
   </v-app-bar>
 </template>
 
 <script>
 export default {
   name: "Navbar",
+  data: () => {
+    return {
+      menu: false,
+    };
+  },
   methods: {
     redirect(routeObject, disabledPath) {
       if (this.$route.path !== disabledPath) this.$router.push(routeObject);
+    },
+  },
+  computed: {
+    dropdownText() {
+      return "options";
     },
   },
 };
