@@ -64,14 +64,6 @@
         Details
       </v-btn>
       <!--dodaj v-if-->
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn color="#ea9b09" dark v-bind="attrs" v-on="on" rounded>
-            <v-icon color="white"> mdi-pencil </v-icon>
-          </v-btn>
-        </template>
-        <span>Edit</span>
-      </v-tooltip>
     </v-card-actions>
   </v-card>
 </template>

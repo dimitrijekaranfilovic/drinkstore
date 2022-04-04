@@ -25,7 +25,7 @@ const routes = [
     component: () => import("../views/MostSoldView.vue"),
   },
   {
-    path: "/drink:id",
+    path: "/drink/:id",
     name: "Drink",
     component: () => import("../views/DrinkView.vue"),
   },
