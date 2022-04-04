@@ -50,6 +50,7 @@
       {{ drink.description }}
     </v-card-text>
     <v-card-actions>
+      <!--dodaj v-if za admina-->
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-btn color="primary" dark v-bind="attrs" v-on="on" rounded>
@@ -62,6 +63,15 @@
       <v-btn color="primary lighten-2" text @click="redirectToDrink">
         Details
       </v-btn>
+      <!--dodaj v-if-->
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn color="#ea9b09" dark v-bind="attrs" v-on="on" rounded>
+            <v-icon color="white"> mdi-pencil </v-icon>
+          </v-btn>
+        </template>
+        <span>Edit</span>
+      </v-tooltip>
     </v-card-actions>
   </v-card>
 </template>
@@ -74,7 +84,7 @@ export default {
   props: ["drink", "index"],
   methods: {
     redirectToDrink() {
-      console.log(`REDIRECT TO DRINK ${this.drink.id}`);
+      this.$router.push({ name: "Drink", params: { id: this.drink.id } });
     },
   },
   computed: {

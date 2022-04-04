@@ -24,6 +24,11 @@ const routes = [
     name: "MostSold",
     component: () => import("../views/MostSoldView.vue"),
   },
+  {
+    path: "/drink:id",
+    name: "Drink",
+    component: () => import("../views/DrinkView.vue"),
+  },
 ];
 //TODO: dodati redirekt sa Home stranice na login ili index u zavisnosti od toga da li je korisnik ulogovan
 const router = new VueRouter({
