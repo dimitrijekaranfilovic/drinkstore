@@ -48,13 +48,13 @@
       </template>
       <v-list>
         <v-list-item-group>
-          <v-list-item>
+          <v-list-item @click="redirect({ name: 'Login' }, '/login')">
             <v-icon color="primary"> mdi-clipboard-account-outline </v-icon>
             <v-list-item-content>
               <v-list-item-title>Login</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item>
+          <v-list-item @click="redirect({ name: 'Register' }, '/register')">
             <v-icon color="primary"> mdi-account-plus </v-icon>
             <v-list-item-content>
               <v-list-item-title>Register</v-list-item-title>

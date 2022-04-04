@@ -4,6 +4,15 @@
       :searchParams="searchParams"
       @searchParamsUpdated="search"
     />
+    <!--dodaj v-if za to je li korisnik ulogovan i je li admin-->
+    <v-row>
+      <v-col cols="12">
+        <v-btn color="primary" depressed @click="addDrinkDialog = true">
+          <v-icon> mdi-bookmark-plus </v-icon>
+          Add drink
+        </v-btn>
+      </v-col>
+    </v-row>
     <v-row dense v-for="(row, rowI) in numRows" :key="rowI">
       <v-col
         v-for="(drink, drinkIndex) in drinks.slice(
@@ -19,23 +28,31 @@
       <!--TODO:  ovo vidi da se malo ispravi, za sad je samo placeholder -->
       <v-pagination v-model="page" :length="6"></v-pagination>
     </div>
+    <add-drink-dialog
+      @dialog-closing="addDrinkDialog = false"
+      :dialog="addDrinkDialog"
+    />
   </v-container>
 </template>
 
 <script>
 import DrinkCard from "../cards/DrinkCard.vue";
 import SearchFilterDrinks from "../SearchFilterDrinks.vue";
+import AddDrinkDialog from "../dialogs/AddDrinkDialog.vue";
+
 export default {
   name: "Home",
-  components: { DrinkCard, SearchFilterDrinks },
+  components: { DrinkCard, SearchFilterDrinks, AddDrinkDialog },
   data: () => {
     return {
+      addDrinkDialog: false,
       searchParams: {
         query: "",
         sortCriteria: "name",
         sortDirection: "asc",
         ratingFrom: 0,
         ratingTo: 5,
+        volumeLabels: ["l", "ml", "fl.oz."],
         categories: ["LIQUOR", "WINE", "BEER", "CARBONATED", "NON_CARBONATED"],
       },
       numRows: 1,
@@ -93,6 +110,10 @@ export default {
   methods: {
     search() {
       console.log(this.searchParams);
+    },
+    closeDialog() {
+      this.addDrinkDialog = false;
+      console.log("ZATVORI DIALOG");
     },
   },
   watch: {

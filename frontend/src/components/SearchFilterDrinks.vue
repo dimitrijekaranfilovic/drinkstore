@@ -81,6 +81,18 @@
                 </v-col>
               </v-row>
               <v-row>
+                <v-col cols="12">
+                  <v-select
+                    v-model="searchParams.volumeLabels"
+                    :items="volumeLabels"
+                    label="Volume label"
+                    multiple
+                    chips
+                    deletable-chips
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
                 <v-col cols="12" md="6">
                   <v-select
                     label="Sort by"
@@ -119,6 +131,7 @@
 //TODO: mozda dodaj neke napredne filtere za poredjenje zapremine
 //TODO: dodaj ono za najprodavanije, ali to mozda na zasebnu stranicu sa drugacijim karticama
 import { categories } from "../util/categories";
+import { volumeLabels } from "../util/volumeLabels";
 export default {
   name: "SearchFilterDrinks",
   props: ["searchParams"],
@@ -126,6 +139,7 @@ export default {
     return {
       dialog: false,
       categories: categories,
+      volumeLabels: volumeLabels,
       sortOptions: [
         {
           text: "Name",
