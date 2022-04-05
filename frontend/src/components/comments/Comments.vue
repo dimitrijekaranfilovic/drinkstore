@@ -31,7 +31,7 @@ export default {
 }
 
 .tree {
-  max-height: 200px;
+  max-height: 500px;
   overflow-y: auto;
 }
 </style>
