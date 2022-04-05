@@ -24,14 +24,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .tree-list ul {
   padding-left: 16px;
   margin: 6px 0;
 }
 
 .tree {
-  max-height: 500px;
+  max-height: 250px;
+  height: 200px;
   overflow-y: auto;
 }
 </style>
