@@ -12,7 +12,7 @@
           <v-icon>mdi-alert-octagon</v-icon>
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon dark @click="$emit('dialog-closing')">
+        <v-btn icon dark @click="closeDialog()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-toolbar>

@@ -14,23 +14,22 @@
         <v-chip :color="drinkCategoryChipColor" text-color="white">
           {{ drink.category | capitalize | removeUnderscore }}
         </v-chip>
+        <!--za ovo dodaj v-if-->
         <v-col align="right">
+          <v-btn color="primary" rounded dark>
+            <v-icon> mdi-cart </v-icon>
+            Add to cart
+          </v-btn>
           <v-btn color="#ea9b09" dark rounded>
             <v-icon color="white"> mdi-pencil </v-icon>
             Edit
           </v-btn>
+          <v-btn color="red" dark rounded>
+            <v-icon color="white"> mdi-delete-forever </v-icon>
+            Delete
+          </v-btn>
         </v-col>
       </v-card-title>
-      <!-- <v-container>
-        <v-row>
-          <v-col>
-            <v-btn color="#ea9b09" dark rounded>
-              <v-icon color="white"> mdi-pencil </v-icon>
-              Edit
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container> -->
       <v-card-actions>
         <span class="avg-grade">Rating:</span>
         <v-spacer></v-spacer>
