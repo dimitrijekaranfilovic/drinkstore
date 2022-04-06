@@ -7,10 +7,7 @@
   >
     <v-card>
       <v-toolbar dark color="primary">
-        <v-toolbar-title>
-          Add drink
-          <v-icon> mdi-filter </v-icon>
-        </v-toolbar-title>
+        <v-toolbar-title> Add drink </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon dark @click="$emit('dialog-closing')">
           <v-icon>mdi-close</v-icon>
