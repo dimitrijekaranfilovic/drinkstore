@@ -11,7 +11,7 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item @click="commentReplyDialog = true">
+            <v-list-item @click="emitReply()">
               <v-list-item-title>
                 <v-icon color="primary">mdi-reply</v-icon>
 
@@ -19,7 +19,7 @@
               </v-list-item-title>
             </v-list-item>
 
-            <v-list-item @click="commentReportDialog = true">
+            <v-list-item @click="emitReport()">
               <v-list-item-title>
                 <v-icon color="red"> mdi-alert-octagon </v-icon>
                 Report
@@ -37,22 +37,13 @@
         />
       </ul>
     </li>
-    <comment-reply-dialog
-      :dialog="commentReplyDialog"
-      @dialog-closing="commentReplyDialog = false"
-      @replied="reply($event)"
-    />
-    <comment-report-dialog
-      :dialog="commentReportDialog"
-      @dialog-closing="commentReportDialog = false"
-      @reported="report($event)"
-    />
   </div>
 </template>
 
 <script>
 import CommentReplyDialog from "../dialogs/CommentReplyDialog.vue";
 import CommentReportDialog from "../dialogs/CommentReportDialog.vue";
+import { eventBus } from "../../util/eventBus";
 
 export default {
   name: "Comment",
@@ -61,19 +52,12 @@ export default {
     CommentReplyDialog,
     CommentReportDialog,
   },
-  data: () => {
-    return {
-      commentReplyDialog: false,
-      commentReportDialog: false,
-    };
-  },
   methods: {
-    reply(e) {
-      console.log(`reply to comment ${this.comment.id} with ${e}`);
-      this.commentReplyDialog = false;
+    emitReply() {
+      eventBus.$emit("reply-btn-clicked", this.comment.id);
     },
-    report(e) {
-      console.log(`report comment ${this.comment.id} for ${e}`);
+    emitReport() {
+      eventBus.$emit("report-btn-clicked", this.comment.id);
     },
   },
 };

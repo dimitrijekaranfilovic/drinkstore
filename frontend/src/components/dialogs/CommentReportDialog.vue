@@ -36,11 +36,8 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn @click="$emit('dialog-closing')">Cancel</v-btn>
-        <v-btn
-          color="primary"
-          @click="$emit('reported', reason)"
-          :disabled="chip === undefined"
+        <v-btn @click="closeDialog()">Cancel</v-btn>
+        <v-btn color="primary" @click="report()" :disabled="chip === undefined"
           >Report</v-btn
         >
       </v-card-actions>
@@ -62,6 +59,16 @@ export default {
   computed: {
     reason() {
       return this.reportReasons.at(this.chip);
+    },
+  },
+  methods: {
+    closeDialog() {
+      this.$emit("dialog-closing");
+      this.chip = undefined;
+    },
+    report() {
+      this.$emit("reported", this.reason);
+      this.chip = undefined;
     },
   },
 };

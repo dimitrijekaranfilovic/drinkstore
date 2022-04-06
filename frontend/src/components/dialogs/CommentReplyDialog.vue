@@ -26,10 +26,8 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="$emit('dialog-closing')">Cancel</v-btn>
-        <v-btn color="primary" @click="$emit('replied', replyText)"
-          >Reply</v-btn
-        >
+        <v-btn @click="closeDialog()">Cancel</v-btn>
+        <v-btn color="primary" @click="reply()">Reply</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -43,6 +41,16 @@ export default {
     return {
       replyText: "",
     };
+  },
+  methods: {
+    closeDialog() {
+      this.$emit("dialog-closing");
+      this.replyText = "";
+    },
+    reply() {
+      this.$emit("replied", this.replyText);
+      this.replyText = "";
+    },
   },
 };
 </script>
