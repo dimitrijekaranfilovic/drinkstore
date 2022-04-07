@@ -12,7 +12,7 @@
     <v-card-title
       ><span v-if="index !== undefined">{{ index + 1 }}. </span>
       {{ drink.name }}
-
+      <!--TODO: dodaj cijenu-->
       <v-chip class="ma-2" color="secondary" outlined>
         {{ drink.volume }}{{ drink.volumeLabel }}
       </v-chip>
@@ -50,7 +50,7 @@
       {{ drink.description }}
     </v-card-text>
     <v-card-actions>
-      <!--dodaj v-if za admina-->
+      <!--TODO: dodaj v-if za admina-->
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-btn color="primary" dark v-bind="attrs" v-on="on" rounded>
@@ -63,7 +63,7 @@
       <v-btn color="primary lighten-2" text @click="redirectToDrink">
         Details
       </v-btn>
-      <!--dodaj v-if-->
+      <!--TODO: dodaj v-if-->
     </v-card-actions>
   </v-card>
 </template>

@@ -54,6 +54,7 @@ export default {
           averageGrade: 4.8,
           category: "LIQUOR",
           numberOfSales: 100,
+          price: 3000,
         },
         {
           id: 2,
@@ -64,6 +65,7 @@ export default {
           averageGrade: 4.8,
           category: "WINE",
           numberOfSales: 99,
+          price: 3000,
         },
         {
           id: 3,
@@ -74,6 +76,7 @@ export default {
           averageGrade: 4.8,
           category: "BEER",
           numberOfSales: 98,
+          price: 3000,
         },
       ],
     };

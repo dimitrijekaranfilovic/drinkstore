@@ -67,6 +67,7 @@ export default {
           volumeLabel: "l",
           averageGrade: 4.8,
           category: "LIQUOR",
+          price: 3000,
         },
         {
           id: 2,
@@ -76,6 +77,7 @@ export default {
           volumeLabel: "l",
           averageGrade: 4.8,
           category: "WINE",
+          price: 3000,
         },
         {
           id: 3,
@@ -85,6 +87,7 @@ export default {
           volumeLabel: "l",
           averageGrade: 4.8,
           category: "BEER",
+          price: 3000,
         },
         {
           id: 4,
@@ -94,6 +97,7 @@ export default {
           volumeLabel: "l",
           averageGrade: 4.8,
           category: "CARBONATED",
+          price: 3000,
         },
         {
           id: 5,
@@ -103,6 +107,7 @@ export default {
           volumeLabel: "l",
           averageGrade: 4.8,
           category: "NON_CARBONATED",
+          price: 3000,
         },
       ],
       page: 1,

@@ -14,7 +14,7 @@
         <v-chip :color="drinkCategoryChipColor" text-color="white">
           {{ drink.category | capitalize | removeUnderscore }}
         </v-chip>
-        <!--za ovo dodaj v-if-->
+        <!-- TODO: za ovo dodaj v-if i dodaj cijenu-->
         <v-col align="right">
           <v-btn color="primary" rounded dark>
             <v-icon> mdi-cart </v-icon>
@@ -92,7 +92,7 @@ export default {
     DrinkDialog,
   },
   data: () => {
-    //ovaj drink je samo placeholder
+    //TODO: ovaj drink je samo placeholder
     return {
       drinkDialog: false,
       drink: {
