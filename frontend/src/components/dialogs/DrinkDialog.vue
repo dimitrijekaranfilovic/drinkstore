@@ -7,7 +7,7 @@
   >
     <v-card>
       <v-toolbar dark color="primary">
-        <v-toolbar-title> Add drink </v-toolbar-title>
+        <v-toolbar-title> {{ dialogTitleText }} </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon dark @click="$emit('dialog-closing')">
           <v-icon>mdi-close</v-icon>
@@ -63,7 +63,9 @@
       </v-card-text>
       <v-card-actions>
         <v-btn @click="$emit('dialog-closing')">Cancel</v-btn>
-        <v-btn color="primary">Add</v-btn>
+        <v-btn color="primary" @click="emitConfirmEvent()">{{
+          confirmButtonText
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -74,8 +76,8 @@ import { volumeLabels } from "../../util/volumeLabels";
 import { categories } from "../../util/categories";
 
 export default {
-  name: "AddDrinkDialog",
-  props: ["dialog"],
+  name: "DrinkDialog",
+  props: ["dialog", "drinkToEdit"],
   data: () => {
     return {
       volumeLabels: volumeLabels,
@@ -89,6 +91,28 @@ export default {
         category: "",
       },
     };
+  },
+  mounted() {
+    if (this.drinkToEdit) this.drink = { ...this.drinkToEdit };
+  },
+  methods: {
+    emitConfirmEvent() {
+      let eventName;
+      if (this.drinkToEdit) {
+        eventName = "drink-edited";
+      } else {
+        eventName = "drink-added";
+      }
+      this.$emit(eventName, this.drink);
+    },
+  },
+  computed: {
+    confirmButtonText() {
+      return this.drinkToEdit === undefined ? "Add" : "Save changes";
+    },
+    dialogTitleText() {
+      return this.drinkToEdit === undefined ? "Add drink" : "Edit drink";
+    },
   },
 };
 </script>

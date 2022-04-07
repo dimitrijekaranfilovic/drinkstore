@@ -7,7 +7,7 @@
     <!--dodaj v-if za to je li korisnik ulogovan i je li admin-->
     <v-row>
       <v-col cols="12">
-        <v-btn color="primary" depressed @click="addDrinkDialog = true">
+        <v-btn color="primary" depressed @click="drinkDialog = true">
           <v-icon> mdi-bookmark-plus </v-icon>
           Add drink
         </v-btn>
@@ -28,9 +28,10 @@
       <!--TODO:  ovo vidi da se malo ispravi, za sad je samo placeholder -->
       <v-pagination v-model="page" :length="6"></v-pagination>
     </div>
-    <add-drink-dialog
-      @dialog-closing="addDrinkDialog = false"
-      :dialog="addDrinkDialog"
+    <drink-dialog
+      @dialog-closing="drinkDialog = false"
+      :dialog="drinkDialog"
+      @drink-added="addDrink($event)"
     />
   </v-container>
 </template>
@@ -38,14 +39,14 @@
 <script>
 import DrinkCard from "../cards/DrinkCard.vue";
 import SearchFilterDrinks from "../SearchFilterDrinks.vue";
-import AddDrinkDialog from "../dialogs/AddDrinkDialog.vue";
+import DrinkDialog from "../dialogs/DrinkDialog.vue";
 
 export default {
   name: "Home",
-  components: { DrinkCard, SearchFilterDrinks, AddDrinkDialog },
+  components: { DrinkCard, SearchFilterDrinks, DrinkDialog },
   data: () => {
     return {
-      addDrinkDialog: false,
+      drinkDialog: false,
       searchParams: {
         query: "",
         sortCriteria: "name",
@@ -63,7 +64,7 @@ export default {
           name: "Vinjak",
           description: "Opis",
           volume: 0.75,
-          volumeMark: "l",
+          volumeLabel: "l",
           averageGrade: 4.8,
           category: "LIQUOR",
         },
@@ -72,7 +73,7 @@ export default {
           name: "Vranac",
           description: "Opis",
           volume: 0.75,
-          volumeMark: "l",
+          volumeLabel: "l",
           averageGrade: 4.8,
           category: "WINE",
         },
@@ -81,7 +82,7 @@ export default {
           name: "Zajecarsko",
           description: "Opis",
           volume: 0.75,
-          volumeMark: "l",
+          volumeLabel: "l",
           averageGrade: 4.8,
           category: "BEER",
         },
@@ -90,7 +91,7 @@ export default {
           name: "Koka kola",
           description: "Opis",
           volume: 0.75,
-          volumeMark: "l",
+          volumeLabel: "l",
           averageGrade: 4.8,
           category: "CARBONATED",
         },
@@ -99,7 +100,7 @@ export default {
           name: "Multivitamin",
           description: "Opis",
           volume: 0.75,
-          volumeMark: "l",
+          volumeLabel: "l",
           averageGrade: 4.8,
           category: "NON_CARBONATED",
         },
@@ -112,8 +113,11 @@ export default {
       console.log(this.searchParams);
     },
     closeDialog() {
-      this.addDrinkDialog = false;
+      this.drinkDialog = false;
       console.log("ZATVORI DIALOG");
+    },
+    addDrink(drink) {
+      console.log("Add drink ", drink);
     },
   },
   watch: {

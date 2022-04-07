@@ -14,7 +14,7 @@
       {{ drink.name }}
 
       <v-chip class="ma-2" color="secondary" outlined>
-        {{ drink.volume }}{{ drink.volumeMark }}
+        {{ drink.volume }}{{ drink.volumeLabel }}
       </v-chip>
       <v-chip :color="drinkCategoryChipColor" text-color="white">
         {{ drink.category | capitalize | removeUnderscore }}

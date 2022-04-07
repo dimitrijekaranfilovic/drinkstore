@@ -9,7 +9,7 @@
         {{ drink.name }}
 
         <v-chip class="ma-2" color="secondary" outlined>
-          {{ drink.volume }}{{ drink.volumeMark }}
+          {{ drink.volume }}{{ drink.volumeLabel }}
         </v-chip>
         <v-chip :color="drinkCategoryChipColor" text-color="white">
           {{ drink.category | capitalize | removeUnderscore }}
@@ -20,11 +20,11 @@
             <v-icon> mdi-cart </v-icon>
             Add to cart
           </v-btn>
-          <v-btn color="#ea9b09" dark rounded>
+          <v-btn color="#ea9b09" dark rounded @click="drinkDialog = true">
             <v-icon color="white"> mdi-pencil </v-icon>
             Edit
           </v-btn>
-          <v-btn color="red" dark rounded>
+          <v-btn color="red" dark rounded @click="deleteDrink()">
             <v-icon color="white"> mdi-delete-forever </v-icon>
             Delete
           </v-btn>
@@ -71,27 +71,36 @@
         <comments :comments="comments" />
       </v-card-text>
     </v-card>
+    <drink-dialog
+      :dialog="drinkDialog"
+      :drinkToEdit="drink"
+      @dialog-closing="drinkDialog = false"
+      @drink-edited="editDrink($event)"
+    />
   </v-container>
 </template>
 
 <script>
 import { categories } from "../../util/categories";
 import Comments from "../comments/Comments.vue";
+import DrinkDialog from "../dialogs/DrinkDialog.vue";
 
 export default {
   name: "Drink",
   components: {
     Comments,
+    DrinkDialog,
   },
   data: () => {
     //ovaj drink je samo placeholder
     return {
+      drinkDialog: false,
       drink: {
         id: 1,
         name: "Vinjak",
         description: "Opis",
         volume: 0.75,
-        volumeMark: "l",
+        volumeLabel: "l",
         averageGrade: 4.8,
         category: "BEER",
       },
@@ -118,6 +127,14 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    editDrink(drink) {
+      console.log("Edit drink ", drink);
+    },
+    deleteDrink() {
+      console.log("delete drink");
+    },
   },
   computed: {
     drinkCategoryChipColor() {
