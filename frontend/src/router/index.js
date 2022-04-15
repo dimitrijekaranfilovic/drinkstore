@@ -29,8 +29,12 @@ const routes = [
     name: "Drink",
     component: () => import("../views/DrinkView.vue"),
   },
+  {
+    path: "/cart",
+    name: "Cart",
+    component: () => import("../views/CartView.vue"),
+  },
 ];
-//TODO: dodati redirekt sa Home stranice na login ili index u zavisnosti od toga da li je korisnik ulogovan
 const router = new VueRouter({
   routes,
   mode: "history",

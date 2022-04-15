@@ -14,7 +14,9 @@
         <v-chip :color="drinkCategoryChipColor" text-color="white">
           {{ drink.category | capitalize | removeUnderscore }}
         </v-chip>
-        <!-- TODO: za ovo dodaj v-if i dodaj cijenu-->
+        <!-- TODO: za ovo dodaj v-if-->
+        <!-- TODO: mozda dodaj da admin moze da oznaci da vise nije na stanju-->
+
         <v-col align="right">
           <v-btn color="primary" rounded dark>
             <v-icon> mdi-cart </v-icon>
@@ -30,6 +32,9 @@
           </v-btn>
         </v-col>
       </v-card-title>
+      <v-chip class="ma-2" color="red" text-color="white">
+        <strong>{{ drink.price }} RSD</strong>
+      </v-chip>
       <v-card-actions>
         <span class="avg-grade">Rating:</span>
         <v-spacer></v-spacer>
@@ -83,7 +88,7 @@
 <script>
 import { categories } from "../../util/categories";
 import Comments from "../comments/Comments.vue";
-import DrinkDialog from "../dialogs/DrinkDialog.vue";
+import DrinkDialog from "./DrinkDialog.vue";
 
 export default {
   name: "Drink",
@@ -103,6 +108,7 @@ export default {
         volumeLabel: "l",
         averageGrade: 4.8,
         category: "BEER",
+        price: 2000,
       },
       comments: [
         {

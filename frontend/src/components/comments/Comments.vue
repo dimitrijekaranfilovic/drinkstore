@@ -25,8 +25,8 @@
 
 <script>
 import Comment from "./Comment.vue";
-import CommentReplyDialog from "../dialogs/CommentReplyDialog.vue";
-import CommentReportDialog from "../dialogs/CommentReportDialog.vue";
+import CommentReplyDialog from "./CommentReplyDialog.vue";
+import CommentReportDialog from "./CommentReportDialog.vue";
 import { eventBus } from "../../util/eventBus";
 
 export default {

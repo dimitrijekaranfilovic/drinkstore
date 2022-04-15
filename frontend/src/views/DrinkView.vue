@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Drink from "../components/page-components/Drink.vue";
+import Drink from "../components/drink/Drink.vue";
 
 export default {
   name: "DrinkView",

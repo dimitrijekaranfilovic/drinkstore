@@ -128,10 +128,8 @@
 </template>
 
 <script>
-//TODO: mozda dodaj neke napredne filtere za poredjenje zapremine
-//TODO: dodaj ono za najprodavanije, ali to mozda na zasebnu stranicu sa drugacijim karticama
-import { categories } from "../util/categories";
-import { volumeLabels } from "../util/volumeLabels";
+import { categories } from "@/util/categories";
+import { volumeLabels } from "@/util/volumeLabels";
 export default {
   name: "SearchFilterDrinks",
   props: ["searchParams"],

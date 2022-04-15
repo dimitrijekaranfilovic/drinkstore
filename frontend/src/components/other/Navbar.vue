@@ -60,6 +60,15 @@
               <v-list-item-title>Register</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item>
+            <v-icon color="primary">mdi-cart</v-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                Cart
+                <v-badge :content="cartItems" :value="cartItems"> </v-badge>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-divider></v-divider>
           <v-list-item>
             <v-icon color="black"> mdi-logout </v-icon>
@@ -89,6 +98,11 @@ export default {
   computed: {
     dropdownText() {
       return "options";
+    },
+    cartItems() {
+      const cartItems = localStorage.getItem("cartItems");
+      if (!cartItems) return "0";
+      else return cartItems;
     },
   },
 };
