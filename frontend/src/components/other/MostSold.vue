@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import DrinkCard from "../cards/DrinkCard.vue";
+import DrinkCard from "../drink/DrinkCard.vue";
 
 export default {
   components: { DrinkCard },

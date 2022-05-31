@@ -8,6 +8,7 @@ import "vue-toast-notification/dist/theme-sugar.css";
 //filters
 import "./filters/capitalizeFilter";
 import "./filters/removeUnderscoreFilter";
+import store from './store'
 
 Vue.use(VueToast);
 Vue.config.productionTip = false;
@@ -15,5 +16,6 @@ Vue.config.productionTip = false;
 new Vue({
   router,
   vuetify,
-  render: (h) => h(App),
+  store,
+  render: (h) => h(App)
 }).$mount("#app");

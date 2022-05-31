@@ -37,9 +37,9 @@
 </template>
 
 <script>
-import DrinkCard from "../cards/DrinkCard.vue";
-import SearchFilterDrinks from "../SearchFilterDrinks.vue";
-import DrinkDialog from "../dialogs/DrinkDialog.vue";
+import DrinkCard from "../drink/DrinkCard.vue";
+import SearchFilterDrinks from "./SearchFilterDrinks.vue";
+import DrinkDialog from "../drink/DrinkDialog.vue";
 
 export default {
   name: "Home",
@@ -67,7 +67,7 @@ export default {
           volumeLabel: "l",
           averageGrade: 4.8,
           category: "LIQUOR",
-          price: 3000,
+          price: 3200,
         },
         {
           id: 2,
@@ -77,7 +77,7 @@ export default {
           volumeLabel: "l",
           averageGrade: 4.8,
           category: "WINE",
-          price: 3000,
+          price: 3100,
         },
         {
           id: 3,
@@ -87,7 +87,7 @@ export default {
           volumeLabel: "l",
           averageGrade: 4.8,
           category: "BEER",
-          price: 3000,
+          price: 300,
         },
         {
           id: 4,

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import MostSold from "../components/page-components/MostSold.vue";
+import MostSold from "../components/other/MostSold.vue";
 
 export default {
   name: "MostSoldView",
