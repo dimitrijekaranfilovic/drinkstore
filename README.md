@@ -42,7 +42,7 @@ Sistem je zasnovan na mikroservisnoj arhitekturi.
 |**UserService**|servis za autentifikaciju, autorizaciju, dodavanje i banovanje korisnika|Go, PostgreSQL|
 |**CommentService**|servis za upravljanje komentarima i njihovim prijavama|Go, MongoDB|
 |**DrinkService**|servis za upravljanje pićima|Go, PostgreSQL|
-|**PurchaseService**|servis za obavljanje same kupovine|Pharo, PostgreSQL|
+|**PurchaseService**|servis za obavljanje same kupovine|Rust, PostgreSQL|
 
 **Ostale komponente**
 |Naziv komponente|Opis|Tehnologije|
