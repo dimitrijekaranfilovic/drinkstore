@@ -52,5 +52,8 @@ Sistem je zasnovan na mikroservisnoj arhitekturi.
 
 
 
+## Proširenja za diplomski
+
+Bio bi odrađen proces deployment-a, korišćenjem Docker-a.
 
 
