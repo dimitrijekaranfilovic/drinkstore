@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
@@ -38,6 +39,38 @@ func RegisterUser(writer http.ResponseWriter, request *http.Request) {
 		})
 	}
 
+}
+
+func Authorize(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	queryParams := request.URL.Query()
+	authority := queryParams.Get("authority")
+
+	authorizationHeader := request.Header.Get("Authorization")
+	tokenString := authorizationHeader[7:]
+	token, err := jwt.ParseWithClaims(tokenString, &model.JwtClaims{},
+		func(t *jwt.Token) (interface{}, error) {
+			return signingKey, nil
+		})
+
+	if err != nil || !token.Valid {
+		fmt.Println("Ili ima gresku ili token ne valja")
+		fmt.Println(err.Error())
+		writer.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
+		return
+	}
+
+	if token.Claims.(*model.JwtClaims).Authority != authority {
+		fmt.Println("Nije dobar autoritet")
+		writer.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
+		return
+	}
+	fmt.Println("Sve ok")
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: true})
+	return
 }
 
 func Authenticate(writer http.ResponseWriter, request *http.Request) {
@@ -85,7 +118,8 @@ func generateJwt(user *model.User) (string, error) {
 
 	claims := token.Claims.(jwt.MapClaims)
 	claims["sub"] = user.Username
-	claims["role"] = authority.Name
+	claims["authority"] = authority.Name
+	claims["iat"] = timestamp.Unix()
 	claims["exp"] = timestamp.Add(time.Hour * 2).Unix()
 	claims["userId"] = user.Id
 	claims["iss"] = "ntp-user-service"

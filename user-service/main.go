@@ -19,6 +19,7 @@ func main() {
 	router.HandleFunc("/api/users/register", handlers.RegisterUser).Methods("POST")
 	router.HandleFunc("/api/users/authenticate", handlers.Authenticate).Methods("POST")
 	router.HandleFunc("/api/users/ban/{id}", handlers.BanUser).Methods("GET") //vidi ovo malo bolje
+	router.HandleFunc("/api/users/authorize", handlers.Authorize).Methods("GET")
 
 	fmt.Println("Listening on port: " + port[1:])
 	log.Fatalln(http.ListenAndServe(port, router))

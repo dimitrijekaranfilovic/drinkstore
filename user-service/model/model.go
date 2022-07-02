@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"github.com/golang-jwt/jwt"
+	"time"
+)
 
 type ApiError interface {
 	ApiError() (string, time.Time, string, int, string)
@@ -40,4 +43,9 @@ func ToUser(dto *UserCreationDTO) User {
 		AuthorityId: 2, //USER authority,
 		Banned:      false,
 	}
+}
+
+type JwtClaims struct {
+	Authority string `json:"authority"`
+	jwt.StandardClaims
 }

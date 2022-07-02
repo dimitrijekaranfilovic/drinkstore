@@ -16,6 +16,10 @@ type AuthenticationRequestDTO struct {
 	Password string `json:"password"`
 }
 
+type AuthorizationResponse struct {
+	Allowed bool `json:"allowed"`
+}
+
 type AuthenticationResponseDTO struct {
 	Jwt string `json:"jwt"`
 }
