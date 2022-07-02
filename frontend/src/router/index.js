@@ -34,6 +34,11 @@ const routes = [
     name: "Cart",
     component: () => import("../views/CartView.vue"),
   },
+  {
+    path: "/reported-comments",
+    name: "ReportedComments",
+    component: () => import("../views/ReportedCommentsView.vue"),
+  },
 ];
 const router = new VueRouter({
   routes,
