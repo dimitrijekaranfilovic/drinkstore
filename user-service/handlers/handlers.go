@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -12,6 +12,8 @@ import (
 	"user-service/model"
 	"user-service/repository"
 )
+
+var signingKey = []byte("signing_key")
 
 func RegisterUser(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
@@ -55,9 +57,49 @@ func Authenticate(writer http.ResponseWriter, request *http.Request) {
 			createBadCredentialsError(writer)
 		} else {
 			//TODO: napravi token
-			fmt.Println("Login uspjesan")
+			token, err2 := generateJwt(&user)
+			if err2 != nil {
+				writer.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(writer).Encode(model.Error{
+					Message:       "Error creating token.",
+					Timestamp:     time.Now(),
+					Path:          "/api/users/authenticate",
+					Status:        http.StatusInternalServerError,
+					StatusMessage: "Internal Server Error.",
+				})
+			} else {
+				//fmt.Println("Login uspjesan")
+				json.NewEncoder(writer).Encode(model.AuthenticationResponseDTO{Jwt: token})
+			}
+
 		}
 	}
+}
+
+func generateJwt(user *model.User) (string, error) {
+	authority, err := repository.FindAuthorityById(user.AuthorityId)
+
+	timestamp := time.Now()
+
+	token := jwt.New(jwt.SigningMethodHS512)
+
+	claims := token.Claims.(jwt.MapClaims)
+	claims["sub"] = user.Username
+	claims["role"] = authority.Name
+	claims["exp"] = timestamp.Add(time.Hour * 2).Unix()
+	claims["userId"] = user.Id
+	claims["iss"] = "ntp-user-service"
+
+	signedToken, err2 := token.SignedString(signingKey)
+
+	if err != nil {
+		return "", err
+	}
+	if err2 != nil {
+		return "", err2
+	}
+	return signedToken, nil
+
 }
 
 func createBadCredentialsError(writer http.ResponseWriter) {
