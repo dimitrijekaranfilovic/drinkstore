@@ -50,15 +50,32 @@
     </v-card-text>
     <v-card-actions>
       <!--TODO: dodaj v-if za admina-->
-      <v-tooltip bottom>
+
+      <v-tooltip bottom v-if="itemAlreadyinCart">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            color="red"
+            dark
+            rounded
+            v-bind="attrs"
+            v-on="on"
+            @click="removeFromCart()"
+          >
+            <v-icon> mdi-delete</v-icon>
+          </v-btn>
+        </template>
+        <span>Remove from cart</span>
+      </v-tooltip>
+
+      <v-tooltip bottom v-else>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             color="primary"
             dark
-            v-bind="attrs"
-            v-on="on"
             rounded
             @click="addToCart()"
+            v-bind="attrs"
+            v-on="on"
           >
             <v-icon> mdi-cart </v-icon>
           </v-btn>
@@ -79,7 +96,7 @@
 
 <script>
 import { categories } from "../../util/categories";
-
+// import { mapActions } from "vuex";
 export default {
   name: "DrinkCard",
   props: ["drink", "index"],
@@ -88,12 +105,30 @@ export default {
       this.$router.push({ name: "Drink", params: { id: this.drink.id } });
     },
     addToCart() {
-      //TODO: vuex?
+      let drinkId = this.drink.id;
+      let drinkName = this.drink.name;
+      let drinkPrice = this.drink.price;
+      this.$store.dispatch("addCartItem", {
+        id: drinkId,
+        name: drinkName,
+        price: drinkPrice,
+        amount: 1,
+      });
+    },
+    removeFromCart() {
+      let drinkId = this.drink.id;
+      this.$store.dispatch("removeCartItem", drinkId);
     },
   },
   computed: {
     drinkCategoryChipColor() {
       return categories.find((c) => c.value === this.drink.category).color;
+    },
+    itemAlreadyinCart() {
+      let result =
+        this.$store.state.cart.find((item) => item.id === this.drink.id) !==
+        undefined;
+      return result;
     },
   },
 };

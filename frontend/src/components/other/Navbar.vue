@@ -2,7 +2,7 @@
   <v-app-bar app color="primary" dark>
     <div
       class="d-flex align-center home-icon"
-      @click="redirect({ name: 'Home' }, '/')"
+      @click="redirect({ name: 'Home' })"
     >
       <v-icon> mdi-bottle-wine </v-icon>
 
@@ -16,15 +16,11 @@
     </div>
     <v-spacer />
     <div>
-      <v-btn @click="redirect({ name: 'Home' }, '/')" color="primary" depressed>
+      <v-btn @click="redirect({ name: 'Home' })" color="primary" depressed>
         <v-icon> mdi-home </v-icon>
         Home
       </v-btn>
-      <v-btn
-        @click="redirect({ name: 'MostSold' }, '/most-sold')"
-        color="primary"
-        depressed
-      >
+      <v-btn @click="redirect({ name: 'MostSold' })" color="primary" depressed>
         <v-icon> mdi-chart-areaspline </v-icon>
         Most sold
       </v-btn>
@@ -36,36 +32,40 @@
       <template v-slot:activator="{ on, attrs }">
         <v-btn color="primary" depressed v-bind="attrs" v-on="on">
           {{ dropdownText }}
-          <v-icon v-if="menu">
-            mdi-chevron-up-circle-outline
-            <!-- mdi-arrow-up-drop-circle-outline -->
-          </v-icon>
-          <v-icon v-else>
-            mdi-chevron-down-circle-outline
-            <!-- mdi-arrow-down-drop-circle-outline -->
-          </v-icon>
+          <v-icon v-if="menu"> mdi-chevron-up-circle-outline </v-icon>
+          <v-icon v-else> mdi-chevron-down-circle-outline </v-icon>
         </v-btn>
       </template>
       <v-list>
         <v-list-item-group>
-          <v-list-item @click="redirect({ name: 'Login' }, '/login')">
+          <v-list-item @click="redirect({ name: 'Login' })">
             <v-icon color="primary"> mdi-clipboard-account-outline </v-icon>
             <v-list-item-content>
               <v-list-item-title>Login</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="redirect({ name: 'Register' }, '/register')">
+          <v-list-item @click="redirect({ name: 'Register' })">
             <v-icon color="primary"> mdi-account-plus </v-icon>
             <v-list-item-content>
               <v-list-item-title>Register</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item>
+          <v-list-item @click="redirect({ name: 'ReportedComments' })">
+            <v-icon color="primary">mdi-alert</v-icon>
+            <v-list-item-content>
+              <v-list-item-title> Reported comments </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="redirect({ name: 'Cart' })">
             <v-icon color="primary">mdi-cart</v-icon>
             <v-list-item-content>
               <v-list-item-title>
                 Cart
-                <v-badge :content="cartItems" :value="cartItems"> </v-badge>
+                <v-badge
+                  :content="$store.state.cart.length"
+                  :value="$store.state.cart.length"
+                >
+                </v-badge>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -91,18 +91,13 @@ export default {
     };
   },
   methods: {
-    redirect(routeObject, disabledPath) {
-      if (this.$route.path !== disabledPath) this.$router.push(routeObject);
+    redirect(routeObject) {
+      this.$router.push(routeObject).catch(() => {});
     },
   },
   computed: {
     dropdownText() {
       return "options";
-    },
-    cartItems() {
-      const cartItems = localStorage.getItem("cartItems");
-      if (!cartItems) return "0";
-      else return cartItems;
     },
   },
 };

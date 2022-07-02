@@ -1,8 +1,10 @@
 <template>
   <v-container>
     <v-row align="center" justify="center">
-      <v-col cols="6" md="6" class="header-col">
-        <h1>Login</h1>
+      <v-col cols="12">
+        <v-flex class="text-center">
+          <h1>Login</h1>
+        </v-flex>
       </v-col>
     </v-row>
     <form @submit.prevent="login">
@@ -69,10 +71,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.header-col {
-  text-align: center;
-  margin-top: 2%;
-}
-</style>

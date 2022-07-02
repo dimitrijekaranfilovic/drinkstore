@@ -119,7 +119,6 @@ export default {
     },
     closeDialog() {
       this.drinkDialog = false;
-      console.log("ZATVORI DIALOG");
     },
     addDrink(drink) {
       console.log("Add drink ", drink);

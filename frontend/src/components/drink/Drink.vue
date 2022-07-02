@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card class="mx-auto">
+    <v-card class="mx-auto" v-if="drink">
       <v-img
         src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
         height="200px"
@@ -18,7 +18,17 @@
         <!-- TODO: mozda dodaj da admin moze da oznaci da vise nije na stanju-->
 
         <v-col align="right">
-          <v-btn color="primary" rounded dark>
+          <v-btn
+            color="red"
+            rounded
+            dark
+            v-if="itemAlreadyinCart"
+            @click="removeFromCart()"
+          >
+            <v-icon> mdi-delete </v-icon>
+            Remove from cart
+          </v-btn>
+          <v-btn color="primary" rounded dark v-else @click="addToCart()">
             <v-icon> mdi-cart </v-icon>
             Add to cart
           </v-btn>
@@ -73,7 +83,7 @@
             </v-col>
           </v-row>
         </v-container>
-        <comments :comments="comments" />
+        <comments :comments="comments" v-if="comments.length > 0" />
       </v-card-text>
     </v-card>
     <drink-dialog
@@ -113,20 +123,25 @@ export default {
       comments: [
         {
           id: 1,
+          user: "user 1",
           content: "AAA",
           children: [
             {
               id: 2,
+              user: "user 2",
               content: "BBB",
               children: [
                 {
                   id: 3,
+                  user: "user 3",
+
                   content: "CCC",
                 },
               ],
             },
             {
               id: 4,
+              user: "user 4",
               content: "DDD",
             },
           ],
@@ -141,10 +156,31 @@ export default {
     deleteDrink() {
       console.log("delete drink");
     },
+    addToCart() {
+      let drinkId = this.drink.id;
+      let drinkName = this.drink.name;
+      let drinkPrice = this.drink.price;
+      this.$store.dispatch("addCartItem", {
+        id: drinkId,
+        name: drinkName,
+        price: drinkPrice,
+        amount: 1,
+      });
+    },
+    removeFromCart() {
+      let drinkId = this.drink.id;
+      this.$store.dispatch("removeCartItem", drinkId);
+    },
   },
   computed: {
     drinkCategoryChipColor() {
       return categories.find((c) => c.value === this.drink.category).color;
+    },
+    itemAlreadyinCart() {
+      let result =
+        this.$store.state.cart.find((item) => item.id === this.drink.id) !==
+        undefined;
+      return result;
     },
   },
   mounted() {

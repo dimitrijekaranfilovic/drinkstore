@@ -1,9 +1,6 @@
 <template>
   <div class="tree">
     <ul class="tree-list">
-      <!-- <v-for comment in comments>
-        <comment :comment="comment" :key="i" />
-      </v-for> -->
       <comment
         v-for="comment in comments"
         :comment="comment"
@@ -58,12 +55,10 @@ export default {
     eventBus.$on("reply-btn-clicked", (e) => {
       this.commentId = e;
       this.commentReplyDialog = true;
-      //console.log(`reply to ${e}`);
     });
     eventBus.$on("report-btn-clicked", (e) => {
       this.commentId = e;
       this.commentReportDialog = true;
-      //console.log(`report ${e}`);
     });
   },
 };

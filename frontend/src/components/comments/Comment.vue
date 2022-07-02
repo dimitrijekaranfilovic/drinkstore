@@ -1,12 +1,15 @@
 <template>
   <div>
     <li class="node-tree">
-      <span class="label">{{ comment.content }}</span>
+      <span class="label"
+        ><strong>{{ comment.user }}</strong
+        >: {{ comment.content }}</span
+      >
 
       <span>
         <v-menu offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn elevation="2" x-small v-bind="attrs" v-on="on">
+            <v-btn elevation="0" x-small v-bind="attrs" v-on="on">
               <v-icon> mdi-dots-vertical </v-icon>
             </v-btn>
           </template>

@@ -1,8 +1,10 @@
 <template>
   <v-container>
     <v-row align="center" justify="center">
-      <v-col cols="6" md="6" class="header-col">
-        <h1>Register</h1>
+      <v-col cols="12">
+        <v-flex class="text-center">
+          <h1>Register</h1>
+        </v-flex>
       </v-col>
     </v-row>
     <v-row align="center" justify="center">
@@ -277,9 +279,6 @@ export default {
 <style scoped>
 .container {
   margin-top: 2%;
-}
-.header-col {
-  text-align: center;
 }
 .next-btn {
   margin-right: 1%;

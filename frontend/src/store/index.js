@@ -9,25 +9,33 @@ export default new Vuex.Store({
     cart: [],
   },
   mutations: {
-    ADD_TO_CART(cartItem) {
+    ADD_TO_CART(state, cartItem) {
       state.cart.push(cartItem);
     },
-    REMOVE_FROM_CART(cartItemId) {
+    REMOVE_FROM_CART(state, cartItemId) {
       state.cart = state.cart.filter((item) => item.id !== cartItemId);
     },
-    UPDATE_CART_ITEM(updatedCartItem) {
+    UPDATE_CART_ITEM(state, updatedCartItem) {
       let itemToUpdate = state.cart.find(
         (item) => item.id === updatedCartItem.id
       );
       itemToUpdate.amount = updatedCartItem.amount;
     },
+    ITEM_EXISTS(state, itemId) {
+      let result = state.cart.find((item) => item.id === itemId);
+      return result !== undefined;
+    },
   },
   actions: {
-    //item: id i kolicina
-    addToCart(store, cartItem) {
+    cartItemExists(store, itemId) {
+      return store.commit("ITEM_EXISTS", itemId);
+    },
+
+    //item: id, naziv, jedinicna cijena i kolicina
+    addCartItem(store, cartItem) {
       store.commit("ADD_TO_CART", cartItem);
     },
-    removeFromCart(store, cartItemId) {
+    removeCartItem(store, cartItemId) {
       store.commit("REMOVE_FROM_CART", cartItemId);
     },
     //updatedItem: id i nova kolicina
@@ -37,7 +45,7 @@ export default new Vuex.Store({
   },
   modules: {},
   getters: {
-    getCart() {
+    getCart(state) {
       return state.cart;
     },
   },
