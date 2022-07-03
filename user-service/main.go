@@ -12,7 +12,7 @@ import (
 func main() {
 	database.ConnectToDatabase()
 
-	port := ":8081"
+	port := "127.0.0.1:8081"
 
 	router := mux.NewRouter()
 
@@ -21,7 +21,7 @@ func main() {
 	router.HandleFunc("/api/users/ban/{id}", handlers.BanUser).Methods("GET") //vidi ovo malo bolje
 	router.HandleFunc("/api/users/authorize", handlers.Authorize).Methods("GET")
 
-	fmt.Println("Listening on port: " + port[1:])
+	fmt.Println("Listening on: " + port)
 	log.Fatalln(http.ListenAndServe(port, router))
 
 }
