@@ -7,6 +7,10 @@ type UserDTO struct {
 	Username string `json:"username"`
 }
 
+type UserIdDTO struct {
+	UserId uint `json:"userId"`
+}
+
 func ToUserDTO(user *User) UserDTO {
 	return UserDTO{Id: user.Id, Username: user.Username}
 }

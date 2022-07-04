@@ -2,12 +2,14 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 	"user-service/database"
 	"user-service/model"
@@ -18,7 +20,6 @@ var signingKey = []byte("signing_key")
 
 func RegisterUser(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	writer.WriteHeader(http.StatusCreated)
 
 	var userCreationDTO model.UserCreationDTO
 	_ = json.NewDecoder(request.Body).Decode(&userCreationDTO)
@@ -28,17 +29,35 @@ func RegisterUser(writer http.ResponseWriter, request *http.Request) {
 
 	err := repository.CreateUser(&user)
 	if err == nil {
+		writer.WriteHeader(http.StatusCreated)
 		json.NewEncoder(writer).Encode(model.ToUserDTO(&user))
 	} else {
-		json.NewEncoder(writer).Encode(model.Error{
-			Message:       err.Error(),
-			Timestamp:     time.Now(),
-			Path:          "/api/users/register",
-			Status:        http.StatusBadRequest,
-			StatusMessage: "Bad request.",
-		})
+		writeBadRequest(writer, request, err)
 	}
 
+}
+
+func extractJWT(writer http.ResponseWriter, request *http.Request) (*jwt.Token, error) {
+	authorizationHeader := request.Header.Get("Authorization")
+	if len(authorizationHeader) == 0 {
+		fmt.Println("No Authorization header found.")
+		writer.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
+		return nil, errors.New("No Authorization header found.")
+	}
+	if !strings.Contains(authorizationHeader, "Bearer") {
+		//fmt.Println("Authorization header nije Bearer.")
+		writer.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
+		return nil, errors.New("Authorization header is not 'Bearer'.")
+	}
+	tokenString := authorizationHeader[7:]
+	token, err := jwt.ParseWithClaims(tokenString, &model.JwtClaims{},
+		func(t *jwt.Token) (interface{}, error) {
+			return signingKey, nil
+		})
+
+	return token, err
 }
 
 func Authorize(writer http.ResponseWriter, request *http.Request) {
@@ -46,12 +65,7 @@ func Authorize(writer http.ResponseWriter, request *http.Request) {
 	queryParams := request.URL.Query()
 	authority := queryParams.Get("authority")
 
-	authorizationHeader := request.Header.Get("Authorization")
-	tokenString := authorizationHeader[7:]
-	token, err := jwt.ParseWithClaims(tokenString, &model.JwtClaims{},
-		func(t *jwt.Token) (interface{}, error) {
-			return signingKey, nil
-		})
+	token, err := extractJWT(writer, request)
 
 	if err != nil || !token.Valid {
 		fmt.Println("Ili ima gresku ili token ne valja")
@@ -82,26 +96,19 @@ func Authenticate(writer http.ResponseWriter, request *http.Request) {
 
 	if err != nil {
 		writer.WriteHeader(http.StatusUnauthorized)
-		createBadCredentialsError(writer)
+		writeBadCredentials(writer)
 	} else {
 		hashComparison := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authReqDTO.Password))
 		if hashComparison != nil {
 			writer.WriteHeader(http.StatusUnauthorized)
-			createBadCredentialsError(writer)
+			writeBadCredentials(writer)
 		} else {
 			//TODO: napravi token
 			token, err2 := generateJwt(&user)
 			if err2 != nil {
-				writer.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(writer).Encode(model.Error{
-					Message:       "Error creating token.",
-					Timestamp:     time.Now(),
-					Path:          "/api/users/authenticate",
-					Status:        http.StatusInternalServerError,
-					StatusMessage: "Internal Server Error.",
-				})
+				writeInternalServerError(writer, request, err2)
 			} else {
-				//fmt.Println("Login uspjesan")
+				writer.WriteHeader(http.StatusOK)
 				json.NewEncoder(writer).Encode(model.AuthenticationResponseDTO{Jwt: token})
 			}
 
@@ -136,16 +143,6 @@ func generateJwt(user *model.User) (string, error) {
 
 }
 
-func createBadCredentialsError(writer http.ResponseWriter) {
-	json.NewEncoder(writer).Encode(model.Error{
-		Message:       "Bad credentials.",
-		Timestamp:     time.Now(),
-		Path:          "/api/users/authenticate",
-		Status:        http.StatusUnauthorized,
-		StatusMessage: "Unauthorized.",
-	})
-}
-
 func BanUser(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(request)
@@ -153,21 +150,14 @@ func BanUser(writer http.ResponseWriter, request *http.Request) {
 
 	user, err := repository.FindUserById(uint(userId))
 	if err != nil {
-		writer.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(writer).Encode(model.Error{
-			Message:       err.Error(),
-			Timestamp:     time.Now(),
-			Path:          "/api/users/ban",
-			Status:        http.StatusNotFound,
-			StatusMessage: "Not found.",
-		})
+		writeNotFound(writer, request, err)
 	} else {
 		if user.AuthorityId == 1 {
 			writer.WriteHeader(http.StatusForbidden)
 			json.NewEncoder(writer).Encode(model.Error{
 				Message:       "Admin accounts cannot be banned.",
 				Timestamp:     time.Now(),
-				Path:          "/api/users/ban",
+				Path:          request.RequestURI,
 				Status:        http.StatusForbidden,
 				StatusMessage: "Forbidden.",
 			})
