@@ -15,6 +15,19 @@ import (
 	"time"
 )
 
+func GetSingleDrink(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+	drinkId, _ := strconv.ParseUint(params["id"], 10, 64)
+
+	drink, err := repository.FindDrinkById(uint(drinkId))
+	if err != nil {
+		writeNotFound(writer, request, err)
+		return
+	}
+	json.NewEncoder(writer).Encode(drink)
+}
+
 func GetDrinks(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)

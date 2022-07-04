@@ -19,6 +19,8 @@ func main() {
 	//TODO: dodati dobavljanje slika pica
 	//svi
 	router.HandleFunc("/api/drinks", handlers.GetDrinks).Methods("GET")
+	//svi
+	router.HandleFunc("/api/drinks/{id}", handlers.GetSingleDrink).Methods("GET")
 	//admin
 	router.HandleFunc("/api/drinks", handlers.CreateDrink).Methods("POST")
 	//admin
