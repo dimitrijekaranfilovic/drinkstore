@@ -9,6 +9,7 @@ type Drink struct {
 	Volume       float32 `json:"volume"`
 	VolumeLabel  string  `json:"volumeLabel"`
 	AverageGrade float32 `json:"averageGrade"`
+	Category     string  `json:"category"`
 }
 
 type UserGrade struct {
@@ -25,5 +26,6 @@ func ToDrinkFromDrinkCreationDTO(drinkDTO *DrinkCreateUpdateDTO) Drink {
 		Volume:       drinkDTO.Volume,
 		VolumeLabel:  drinkDTO.VolumeLabel,
 		AverageGrade: 0,
+		Category:     drinkDTO.Category,
 	}
 }

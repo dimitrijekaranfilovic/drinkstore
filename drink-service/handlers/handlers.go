@@ -92,6 +92,7 @@ func UpdateDrink(writer http.ResponseWriter, request *http.Request) {
 		drink.Description = drinkUpdateDTO.Description
 		drink.Volume = drinkUpdateDTO.Volume
 		drink.VolumeLabel = drinkUpdateDTO.VolumeLabel
+		drink.Category = drinkUpdateDTO.Category
 		repository.UpdateDrink(&drink)
 		writer.WriteHeader(http.StatusNoContent)
 	}
@@ -156,6 +157,26 @@ func CreateUserGrade(writer http.ResponseWriter, request *http.Request) {
 }
 
 func UpdateUserGrade(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+
+	params := mux.Vars(request)
+	drinkId, _ := strconv.ParseUint(params["drinkId"], 10, 64)
+	userGradeId, _ := strconv.ParseUint(params["gradeId"], 10, 64)
+	userId := getUserId(request)
+
+	userGrade, err := repository.FindUserGrade(uint(drinkId), uint(userGradeId), uint(userId))
+	if err != nil {
+		writeNotFound(writer, request, err)
+		return
+	}
+
+	var userGradeDTO model.UserGradeDTO
+	_ = json.NewDecoder(request.Body).Decode(&userGradeDTO)
+
+	userGrade.Grade = userGradeDTO.Grade
+	repository.UpdateUserGrade(&userGrade)
+
+	writer.WriteHeader(http.StatusNoContent)
 
 }
 

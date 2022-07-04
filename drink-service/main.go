@@ -16,6 +16,8 @@ func main() {
 
 	router := mux.NewRouter()
 
+	//TODO: dodati paginirano dobavljanje pica sa slikama
+	
 	//admin
 	router.HandleFunc("/api/drinks", handlers.CreateDrink).Methods("POST")
 	//admin
