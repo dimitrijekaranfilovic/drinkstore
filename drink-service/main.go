@@ -27,9 +27,9 @@ func main() {
 	//user
 	router.HandleFunc("/api/drinks/{id}/grades", handlers.CreateUserGrade).Methods("POST")
 	//user
-	router.HandleFunc("/api/drinks/{id}/grades", handlers.UpdateUserGrade).Methods("PUT")
+	router.HandleFunc("/api/drinks/{drinkId}/grades/{gradeId}", handlers.UpdateUserGrade).Methods("PUT")
 	//user
-	router.HandleFunc("/api/drinks/{id}/grades", handlers.DeleteUserGrade).Methods("DELETE")
+	router.HandleFunc("/api/drinks/{drinkId}/grades/{gradeId}", handlers.DeleteUserGrade).Methods("DELETE")
 
 	fmt.Println("Listening on: " + port)
 	log.Fatalln(http.ListenAndServe(port, router))

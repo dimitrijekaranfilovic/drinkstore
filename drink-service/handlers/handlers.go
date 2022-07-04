@@ -4,6 +4,8 @@ import (
 	"drink-service/model"
 	"drink-service/repository"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/gorilla/mux"
 	"io"
 	"net/http"
@@ -13,7 +15,6 @@ import (
 )
 
 func CreateDrink(writer http.ResponseWriter, request *http.Request) {
-	//kreiram pice, vratim id
 	writer.Header().Set("Content-Type", "application/json")
 
 	var drinkCreationDTO model.DrinkCreateUpdateDTO
@@ -112,9 +113,46 @@ func DeleteDrink(writer http.ResponseWriter, request *http.Request) {
 }
 
 func CreateUserGrade(writer http.ResponseWriter, request *http.Request) {
-	// prvo dobavi id
-	// zatim vidi da li je barem jednom narucio dato pice
-	// i na kraju dodaj ocjenu
+	writer.Header().Set("Content-Type", "application/json")
+	userId := getUserId(request)
+	if userId == -1 {
+		writeBadRequest(writer, request, errors.New("You cannot grade this drink."))
+		return
+	}
+	fmt.Println("User id: " + strconv.FormatInt(int64(userId), 10))
+
+	params := mux.Vars(request)
+	drinkId, _ := strconv.ParseUint(params["id"], 10, 64)
+
+	_, err := repository.FindDrinkById(uint(drinkId))
+	if err != nil {
+		writeBadRequest(writer, request, err)
+		return
+	}
+
+	//TODO: ovdje pozovi purchase service
+	hasOrdered := true
+	if hasOrdered {
+		var userGradeDTO model.UserGradeDTO
+		_ = json.NewDecoder(request.Body).Decode(&userGradeDTO)
+		err := repository.CheckForGradeForUserAndDrink(uint(userId), uint(drinkId))
+		if err != nil {
+			writeBadRequest(writer, request, errors.New("You have already graded this drink."))
+			return
+		}
+
+		userGrade := model.UserGrade{
+			Grade:   userGradeDTO.Grade,
+			DrinkId: uint(drinkId),
+			UserId:  uint(userId)}
+
+		repository.CreateGrade(&userGrade)
+		writer.WriteHeader(http.StatusCreated)
+
+	} else {
+		message := "You cannot grade drink with id: " + strconv.FormatInt(int64(drinkId), 10) + " because you haven't purchased any."
+		writeBadRequest(writer, request, errors.New(message))
+	}
 }
 
 func UpdateUserGrade(writer http.ResponseWriter, request *http.Request) {
@@ -125,9 +163,11 @@ func DeleteUserGrade(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(request)
-	userGradeId, _ := strconv.ParseUint(params["id"], 10, 64)
+	drinkId, _ := strconv.ParseUint(params["drinkId"], 10, 64)
+	userGradeId, _ := strconv.ParseUint(params["gradeId"], 10, 64)
+	userId := getUserId(request)
 
-	err := repository.DeleteUserGradeById(uint(userGradeId))
+	err := repository.DeleteUserGrade(uint(drinkId), uint(userGradeId), uint(userId))
 
 	if err != nil {
 		writeInternalServerError(writer, request, err)
@@ -136,4 +176,15 @@ func DeleteUserGrade(writer http.ResponseWriter, request *http.Request) {
 
 	}
 
+}
+
+func getUserId(request *http.Request) int {
+	client := &http.Client{}
+	newRequest, _ := http.NewRequest("GET", "http://127.0.0.1:8081/api/users/userId", nil)
+	newRequest.Header.Add("Authorization", request.Header.Get("Authorization"))
+	response, _ := client.Do(newRequest)
+
+	var userIdDTO model.UserIdDTO
+	_ = json.NewDecoder(response.Body).Decode(&userIdDTO)
+	return userIdDTO.UserId
 }

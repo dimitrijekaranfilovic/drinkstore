@@ -16,6 +16,7 @@
         </v-chip>
         <!-- TODO: za ovo dodaj v-if-->
         <!-- TODO: mozda dodaj da admin moze da oznaci da vise nije na stanju-->
+        <!--TODO: dodaj da se prikazuje ocjena korisnika, ako je ostavio, ako nije, samo neko dugme grade ili tako nesto-->
 
         <v-col align="right">
           <v-btn

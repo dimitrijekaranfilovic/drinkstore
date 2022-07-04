@@ -40,11 +40,9 @@ func RegisterUser(writer http.ResponseWriter, request *http.Request) {
 func extractJWT(request *http.Request) (*jwt.Token, error) {
 	authorizationHeader := request.Header.Get("Authorization")
 	if len(authorizationHeader) == 0 {
-		fmt.Println("No Authorization header found.")
 		return nil, errors.New("No Authorization header found.")
 	}
 	if !strings.Contains(authorizationHeader, "Bearer") {
-		fmt.Println("Authorization header nije Bearer.")
 		return nil, errors.New("Authorization header is not 'Bearer'.")
 	}
 	tokenString := authorizationHeader[7:]

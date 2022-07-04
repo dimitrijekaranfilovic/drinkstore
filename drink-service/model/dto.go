@@ -17,3 +17,12 @@ type DrinkCreateUpdateDTO struct {
 	Volume      float32 `json:"volume"`
 	VolumeLabel string  `json:"volumeLabel"`
 }
+
+type UserGradeDTO struct {
+	Grade uint8 `json:"grade"`
+}
+
+//TODO: stavi u neki common
+type UserIdDTO struct {
+	UserId int `json:"userId"`
+}

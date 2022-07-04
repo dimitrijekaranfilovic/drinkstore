@@ -18,6 +18,11 @@ func DeleteDrinkById(drinkId uint) error {
 		return errors.New("Error deleting drink with id: " + strconv.FormatUint(uint64(drinkId), 10) + ".")
 	}
 
+	if result2.RowsAffected == 0 {
+		return errors.New("Drink with id: " + strconv.FormatUint(uint64(drinkId), 10) + " does not exist.")
+
+	}
+
 	return nil
 }
 
