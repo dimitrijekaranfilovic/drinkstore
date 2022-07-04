@@ -17,6 +17,7 @@ type DrinkCreateUpdateDTO struct {
 	Volume      float32 `json:"volume"`
 	VolumeLabel string  `json:"volumeLabel"`
 	Category    string  `json:"category"`
+	Price       uint    `json:"price"`
 }
 
 type UserGradeDTO struct {

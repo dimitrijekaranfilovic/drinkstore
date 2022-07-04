@@ -5,15 +5,29 @@ import (
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"log"
+	"os"
+	"time"
 )
 
 var Driver *gorm.DB
 var Err error
 
 func ConnectToDatabase() {
+	sqlLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		logger.Config{
+			SlowThreshold:             time.Second,
+			LogLevel:                  logger.Info,
+			IgnoreRecordNotFoundError: false,
+			Colorful:                  true,
+		},
+	)
 	connectionString := "host=localhost user=postgres password=root dbname=ntp-drink-service port=5432 sslmode=disable"
-	Driver, Err = gorm.Open(postgres.Open(connectionString), &gorm.Config{})
+	Driver, Err = gorm.Open(postgres.Open(connectionString), &gorm.Config{
+		Logger: sqlLogger,
+	})
 
 	if Err != nil {
 		log.Fatalln("Failed to connect database")
@@ -45,10 +59,24 @@ func ConnectToDatabase() {
 
 	drinks := []model.Drink{
 		{
-			Name: "Vinjak", ImagePath: "images/vinjak.jpg", Description: "Samo za najjace", Volume: 0.75, VolumeLabel: "l", AverageGrade: 0.0,
+			Name:         "Vinjak",
+			ImagePath:    "images/vinjak.jpg",
+			Description:  "Samo za najjace",
+			Volume:       0.75,
+			VolumeLabel:  "l",
+			AverageGrade: 0.0,
+			Category:     "LIQUOR",
+			Price:        1199,
 		},
 		{
-			Name: "Coca cola", ImagePath: "images/coca_cola.png", Description: "Klasika", Volume: 2, VolumeLabel: "l", AverageGrade: 0.0,
+			Name:         "Coca cola",
+			ImagePath:    "images/coca_cola.png",
+			Description:  "Klasika",
+			Volume:       2,
+			VolumeLabel:  "l",
+			AverageGrade: 0.0,
+			Category:     "CARBONATED",
+			Price:        220,
 		},
 	}
 

@@ -46,23 +46,23 @@
               <v-row>
                 <v-col cols="12" md="6">
                   <v-text-field
-                    label="From rating"
+                    label="From grade"
                     type="number"
                     min="0"
                     max="5"
                     step="0.1"
-                    v-model="searchParams.ratingFrom"
+                    v-model="searchParams.gradeFrom"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field
-                    label="To rating"
+                    label="To grade"
                     type="number"
                     min="0"
                     max="5"
                     step="0.1"
                     hide-details
-                    v-model="searchParams.ratingTo"
+                    v-model="searchParams.gradeTo"
                   />
                 </v-col>
               </v-row>
@@ -144,12 +144,20 @@ export default {
           value: "name",
         },
         {
-          text: "Rating",
-          value: "rating",
+          text: "Average grade",
+          value: "average_grade",
         },
         {
           text: "Category",
           value: "category",
+        },
+        {
+          text: "Price",
+          value: "price",
+        },
+        {
+          text: "Description",
+          value: "description",
         },
       ],
       sortDirections: [

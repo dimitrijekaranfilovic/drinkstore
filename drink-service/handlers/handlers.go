@@ -11,8 +11,51 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
+
+func GetDrinks(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
+	queryParams := request.URL.Query()
+
+	categories := strings.Split(queryParams.Get("categories"), ",")
+	volumeLabels := strings.Split(queryParams.Get("volumeLabels"), ",")
+	query := queryParams.Get("query")
+	ratingFrom := queryParams.Get("ratingFrom")
+	ratingTo := queryParams.Get("ratingTo")
+
+	page := queryParams.Get("page")
+	size := queryParams.Get("size")
+	sortCriteria := queryParams.Get("sortCriteria")
+	sortDirection := queryParams.Get("sortDirection")
+
+	ratingFromParsed, _ := strconv.ParseFloat(ratingFrom, 64)
+	ratingToParsed, _ := strconv.ParseFloat(ratingTo, 64)
+	pageParsed, _ := strconv.ParseUint(page, 10, 64)
+	sizeParsed, _ := strconv.ParseUint(size, 10, 64)
+
+	drinks, totalItems := repository.GetDrinks(categories, volumeLabels, query, ratingFromParsed, ratingToParsed, pageParsed, sizeParsed, sortCriteria, sortDirection)
+
+	var totalPages int64
+
+	totalPages = totalItems / int64(sizeParsed)
+
+	if totalItems%int64(sizeParsed) != 0 {
+		totalPages += 1
+	}
+
+	drinkPage := model.DrinkPage{
+		Drinks:        drinks,
+		Page:          pageParsed,
+		SortCriteria:  sortCriteria,
+		SortDirection: sortDirection,
+		TotalPages:    totalPages,
+	}
+
+	json.NewEncoder(writer).Encode(drinkPage)
+}
 
 func CreateDrink(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
@@ -93,6 +136,7 @@ func UpdateDrink(writer http.ResponseWriter, request *http.Request) {
 		drink.Volume = drinkUpdateDTO.Volume
 		drink.VolumeLabel = drinkUpdateDTO.VolumeLabel
 		drink.Category = drinkUpdateDTO.Category
+		drink.Price = drinkUpdateDTO.Price
 		repository.UpdateDrink(&drink)
 		writer.WriteHeader(http.StatusNoContent)
 	}

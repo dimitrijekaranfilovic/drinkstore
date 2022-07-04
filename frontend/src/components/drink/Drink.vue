@@ -47,7 +47,7 @@
         <strong>{{ drink.price }} RSD</strong>
       </v-chip>
       <v-card-actions>
-        <span class="avg-grade">Rating:</span>
+        <span class="avg-grade">Average grade:</span>
         <v-spacer></v-spacer>
         <span class="text--lighten-2 text-caption mr-2"> (1.1) </span>
         <v-rating

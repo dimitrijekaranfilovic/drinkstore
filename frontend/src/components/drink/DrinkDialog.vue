@@ -39,6 +39,16 @@
               />
             </v-col>
           </v-row>
+          <v-row align="center" justify="center">
+            <v-col cols="12">
+              <v-text-field
+                label="Price"
+                v-model="drink.price"
+                type="number"
+                append-icon="mdi-cash-multiple"
+              />
+            </v-col>
+          </v-row>
           <v-row>
             <v-col cols="12" md="6">
               <v-file-input
@@ -89,6 +99,7 @@ export default {
         volumeLabel: "",
         image: null,
         category: "",
+        price: 0,
       },
     };
   },
