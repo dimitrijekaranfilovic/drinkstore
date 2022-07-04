@@ -11,7 +11,7 @@ type Error struct {
 	StatusMessage string    `json:"statusMessage"`
 }
 
-type DrinkCreationDTO struct {
+type DrinkCreateUpdateDTO struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Volume      float32 `json:"volume"`

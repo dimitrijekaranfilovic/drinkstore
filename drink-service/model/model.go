@@ -1,5 +1,6 @@
 package model
 
+//TODO: dodati kolicinu?
 type Drink struct {
 	Id           uint    `json:"id" gorm:"primaryKey"`
 	Name         string  `json:"name" gorm:"unique"`
@@ -17,7 +18,7 @@ type UserGrade struct {
 	DrinkId uint  `json:"drinkId"`
 }
 
-func ToDrinkFromDrinkCreationDTO(drinkDTO *DrinkCreationDTO) Drink {
+func ToDrinkFromDrinkCreationDTO(drinkDTO *DrinkCreateUpdateDTO) Drink {
 	return Drink{
 		Name:         drinkDTO.Name,
 		Description:  drinkDTO.Description,

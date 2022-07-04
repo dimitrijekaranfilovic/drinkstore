@@ -8,7 +8,7 @@ type UserDTO struct {
 }
 
 type UserIdDTO struct {
-	UserId uint `json:"userId"`
+	UserId int `json:"userId"`
 }
 
 func ToUserDTO(user *User) UserDTO {

@@ -16,13 +16,20 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/api/drinks", handlers.CreateDrink).Methods("POST")                        //admin
-	router.HandleFunc("/api/drinks/{id}/images", handlers.CreateUpdateDrinkImage).Methods("POST") //admin
-	router.HandleFunc("/api/drinks/{id}", handlers.UpdateDrink).Methods("PUT")                    //admin
-	router.HandleFunc("/api/drinks/{id}", handlers.DeleteDrink).Methods("DELETE")                 //admin
-	router.HandleFunc("/api/drinks/{id}/grades", handlers.CreateUserGrade).Methods("POST")        //user
-	router.HandleFunc("/api/drinks/{id}/grades", handlers.UpdateUserGrade).Methods("PUT")         //user
-	router.HandleFunc("/api/drinks/{id}/grades", handlers.DeleteUserGrade).Methods("DELETE")      //user
+	//admin
+	router.HandleFunc("/api/drinks", handlers.CreateDrink).Methods("POST")
+	//admin
+	router.HandleFunc("/api/drinks/{id}/images", handlers.CreateUpdateDrinkImage).Methods("POST")
+	//admin
+	router.HandleFunc("/api/drinks/{id}", handlers.UpdateDrink).Methods("PUT")
+	//admin
+	router.HandleFunc("/api/drinks/{id}", handlers.DeleteDrink).Methods("DELETE")
+	//user
+	router.HandleFunc("/api/drinks/{id}/grades", handlers.CreateUserGrade).Methods("POST")
+	//user
+	router.HandleFunc("/api/drinks/{id}/grades", handlers.UpdateUserGrade).Methods("PUT")
+	//user
+	router.HandleFunc("/api/drinks/{id}/grades", handlers.DeleteUserGrade).Methods("DELETE")
 
 	fmt.Println("Listening on: " + port)
 	log.Fatalln(http.ListenAndServe(port, router))

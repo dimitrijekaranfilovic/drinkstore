@@ -16,7 +16,7 @@ func CreateDrink(writer http.ResponseWriter, request *http.Request) {
 	//kreiram pice, vratim id
 	writer.Header().Set("Content-Type", "application/json")
 
-	var drinkCreationDTO model.DrinkCreationDTO
+	var drinkCreationDTO model.DrinkCreateUpdateDTO
 	_ = json.NewDecoder(request.Body).Decode(&drinkCreationDTO)
 
 	drink := model.ToDrinkFromDrinkCreationDTO(&drinkCreationDTO)
@@ -76,7 +76,24 @@ func CreateUpdateDrinkImage(writer http.ResponseWriter, request *http.Request) {
 }
 
 func UpdateDrink(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
 
+	params := mux.Vars(request)
+	drinkId, _ := strconv.ParseUint(params["id"], 10, 64)
+
+	drink, err := repository.FindDrinkById(uint(drinkId))
+	if err != nil {
+		writeNotFound(writer, request, err)
+	} else {
+		var drinkUpdateDTO model.DrinkCreateUpdateDTO
+		_ = json.NewDecoder(request.Body).Decode(&drinkUpdateDTO)
+		drink.Name = drinkUpdateDTO.Name
+		drink.Description = drinkUpdateDTO.Description
+		drink.Volume = drinkUpdateDTO.Volume
+		drink.VolumeLabel = drinkUpdateDTO.VolumeLabel
+		repository.UpdateDrink(&drink)
+		writer.WriteHeader(http.StatusNoContent)
+	}
 }
 
 func DeleteDrink(writer http.ResponseWriter, request *http.Request) {
@@ -95,7 +112,9 @@ func DeleteDrink(writer http.ResponseWriter, request *http.Request) {
 }
 
 func CreateUserGrade(writer http.ResponseWriter, request *http.Request) {
-
+	// prvo dobavi id
+	// zatim vidi da li je barem jednom narucio dato pice
+	// i na kraju dodaj ocjenu
 }
 
 func UpdateUserGrade(writer http.ResponseWriter, request *http.Request) {

@@ -47,5 +47,6 @@ func ToUser(dto *UserCreationDTO) User {
 
 type JwtClaims struct {
 	Authority string `json:"authority"`
+	UserId    uint   `json:"userId"`
 	jwt.StandardClaims
 }

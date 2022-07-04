@@ -37,18 +37,14 @@ func RegisterUser(writer http.ResponseWriter, request *http.Request) {
 
 }
 
-func extractJWT(writer http.ResponseWriter, request *http.Request) (*jwt.Token, error) {
+func extractJWT(request *http.Request) (*jwt.Token, error) {
 	authorizationHeader := request.Header.Get("Authorization")
 	if len(authorizationHeader) == 0 {
 		fmt.Println("No Authorization header found.")
-		writer.WriteHeader(http.StatusForbidden)
-		json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
 		return nil, errors.New("No Authorization header found.")
 	}
 	if !strings.Contains(authorizationHeader, "Bearer") {
-		//fmt.Println("Authorization header nije Bearer.")
-		writer.WriteHeader(http.StatusForbidden)
-		json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
+		fmt.Println("Authorization header nije Bearer.")
 		return nil, errors.New("Authorization header is not 'Bearer'.")
 	}
 	tokenString := authorizationHeader[7:]
@@ -65,10 +61,9 @@ func Authorize(writer http.ResponseWriter, request *http.Request) {
 	queryParams := request.URL.Query()
 	authority := queryParams.Get("authority")
 
-	token, err := extractJWT(writer, request)
+	token, err := extractJWT(request)
 
 	if err != nil || !token.Valid {
-		fmt.Println("Ili ima gresku ili token ne valja")
 		fmt.Println(err.Error())
 		writer.WriteHeader(http.StatusForbidden)
 		json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
@@ -166,4 +161,19 @@ func BanUser(writer http.ResponseWriter, request *http.Request) {
 			repository.UpdateUser(&user)
 		}
 	}
+}
+
+func GetUserIdFromJWT(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	token, err := extractJWT(request)
+	if err != nil || !token.Valid {
+		fmt.Println(err.Error())
+		writer.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(writer).Encode(model.UserIdDTO{UserId: -1})
+	} else {
+		writer.WriteHeader(http.StatusOK)
+		userId := token.Claims.(*model.JwtClaims).UserId
+		json.NewEncoder(writer).Encode(model.UserIdDTO{UserId: int(userId)})
+	}
+
 }
