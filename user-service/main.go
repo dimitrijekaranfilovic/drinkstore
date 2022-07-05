@@ -30,8 +30,10 @@ func main() {
 	router.HandleFunc("/api/users/userId", requestHandler.GetUserIdFromJWT).Methods("GET")
 
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins: []string{"http://localhost:9090"},
-		AllowedMethods: []string{"OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE"},
+		AllowCredentials: true,
+		AllowedOrigins:   []string{"http://localhost:9090"},
+		AllowedMethods:   []string{"OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"*"},
 	})
 
 	fmt.Println("Listening on: " + port)

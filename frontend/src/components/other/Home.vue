@@ -24,8 +24,7 @@
       </v-col>
     </v-row>
     <div class="text-center">
-      <!--TODO:  ovo vidi da se malo ispravi, za sad je samo placeholder -->
-      <v-pagination v-model="page" :length="6"></v-pagination>
+      <v-pagination v-model="page" :length="totalPages"></v-pagination>
     </div>
     <drink-dialog
       @dialog-closing="drinkDialog = false"
@@ -39,6 +38,7 @@
 import DrinkCard from "../drink/DrinkCard.vue";
 import SearchFilterDrinks from "./SearchFilterDrinks.vue";
 import DrinkDialog from "../drink/DrinkDialog.vue";
+import { drinkService } from "../../services/drinkService";
 
 export default {
   name: "Home",
@@ -57,60 +57,14 @@ export default {
       },
       numRows: 1,
       numCols: 5,
-      drinks: [
-        {
-          id: 1,
-          name: "Vinjak",
-          description: "Opis",
-          volume: 0.75,
-          volumeLabel: "l",
-          averageGrade: 4.8,
-          category: "LIQUOR",
-          price: 3200,
-        },
-        {
-          id: 2,
-          name: "Vranac",
-          description: "Opis",
-          volume: 0.75,
-          volumeLabel: "l",
-          averageGrade: 4.8,
-          category: "WINE",
-          price: 3100,
-        },
-        {
-          id: 3,
-          name: "Zajecarsko",
-          description: "Opis",
-          volume: 0.75,
-          volumeLabel: "l",
-          averageGrade: 4.8,
-          category: "BEER",
-          price: 300,
-        },
-        {
-          id: 4,
-          name: "Koka kola",
-          description: "Opis",
-          volume: 0.75,
-          volumeLabel: "l",
-          averageGrade: 4.8,
-          category: "CARBONATED",
-          price: 3000,
-        },
-        {
-          id: 5,
-          name: "Multivitamin",
-          description: "Opis",
-          volume: 0.75,
-          volumeLabel: "l",
-          averageGrade: 4.8,
-          category: "NON_CARBONATED",
-          price: 3000,
-        },
-      ],
+      drinks: [],
       page: 1,
+      size: 4,
+      totalPages: 1,
     };
+  },
+  mounted() {
+    this.search(this.page);
   },
   computed: {
     userAuthority() {
@@ -118,8 +72,18 @@ export default {
     },
   },
   methods: {
-    search() {
-      console.log(this.searchParams);
+    search(pageNumber) {
+      const searchPayload = {
+        ...this.searchParams,
+        page: pageNumber - 1,
+        size: this.size,
+      };
+
+      drinkService.getDrinks(searchPayload).then((response) => {
+        const pageObj = response.data;
+        this.totalPages = pageObj.totalPages;
+        this.drinks = pageObj.drinks;
+      });
     },
     closeDialog() {
       this.drinkDialog = false;
@@ -130,7 +94,7 @@ export default {
   },
   watch: {
     page(newPage) {
-      console.log(newPage);
+      this.search(newPage);
     },
   },
 };

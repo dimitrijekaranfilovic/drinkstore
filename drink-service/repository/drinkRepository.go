@@ -6,30 +6,46 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
-func GetDrinks(categories []string, volumeLabels []string, query string, ratingFrom float64, ratingTo float64, page uint64, size uint64, sortCriteria string, sortDirection string) ([]model.Drink, int64) {
-	var drinks []model.Drink
+func GetDrinks(categories []string, volumeLabels []string, query string, gradeFrom float64, gradeTo float64, page uint64, size uint64, sortCriteria string, sortDirection string) ([]model.Drink, int64) {
+	var drinks, totalDrinks []model.Drink
 	var totalItems int64
 
-	query = "%" + query + "%"
+	query = "%" + strings.ToLower(query) + "%"
 	database.Driver.
 		Where(
 			"category IN ? AND "+
 				"volume_label IN ? AND "+
-				"(name LIKE ? OR description LIKE ?) AND "+
+				"(lower(name) LIKE ? OR lower(description) LIKE ?) AND "+
 				"average_grade >= ? "+
 				"AND average_grade <= ? ",
 			categories,
 			volumeLabels,
 			query,
 			query,
-			ratingFrom,
-			ratingTo).
+			gradeFrom,
+			gradeTo).
 		Offset(int(page * size)).
 		Limit(int(size)).
 		Order(sortCriteria + " " + sortDirection).
-		Find(&drinks).Count(&totalItems)
+		Find(&drinks)
+
+	database.Driver.
+		Where(
+			"category IN ? AND "+
+				"volume_label IN ? AND "+
+				"(lower(name) LIKE ? OR lower(description) LIKE ?) AND "+
+				"average_grade >= ? "+
+				"AND average_grade <= ? ",
+			categories,
+			volumeLabels,
+			query,
+			query,
+			gradeFrom,
+			gradeTo).
+		Find(&totalDrinks).Count(&totalItems)
 
 	fmt.Println("Total items: " + strconv.FormatInt(totalItems, 10))
 	return drinks, totalItems

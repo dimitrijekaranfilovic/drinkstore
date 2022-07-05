@@ -38,9 +38,13 @@ func main() {
 	router.HandleFunc("/api/drinks/{drinkId}/grades/{gradeId}", requestHandler.DeleteUserGrade).Methods("DELETE")
 	//user
 	router.HandleFunc("/api/drinks/{id}/grade-for-user", requestHandler.CheckDrinkGradeForUser).Methods("GET")
+	//svi
+	router.HandleFunc("/api/drinks/images/{imageName}", requestHandler.GetSingleImage).Methods("GET")
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins: []string{"http://localhost:9090"},
-		AllowedMethods: []string{"OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE"},
+		AllowCredentials: true,
+		AllowedOrigins:   []string{"http://localhost:9090"},
+		AllowedMethods:   []string{"OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"*"},
 	})
 
 	fmt.Println("Listening on: " + port)

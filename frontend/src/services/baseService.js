@@ -1,43 +1,52 @@
 const axios = require("axios");
 
 export default class BaseService {
-  buildConfig() {
-    let config = {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-      },
-    };
-    return config;
-  }
-
   get(url) {
-    const config = this.buildConfig();
-    return axios.get(url, config);
+    return axios.get(url, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+    });
   }
 
   getWithParams(url, params) {
-    const config = this.buildConfig();
-    return axios.get(
-      url,
-      {
-        params: params,
+    let newParams = { ...params };
+
+    for (let key in params) {
+      if (Array.isArray(params[key])) {
+        newParams[key] = params[key].join(",");
+      }
+    }
+
+    return axios.get(url, {
+      params: newParams,
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
-      config
-    );
+    });
   }
 
   post(url, payload) {
-    const config = this.buildConfig();
-    return axios.post(url, payload, config);
+    return axios.post(url, payload, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+    });
   }
 
   put(url, payload) {
-    const config = this.buildConfig();
-    return axios.put(url, payload, config);
+    return axios.put(url, payload, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+    });
   }
 
   delete(url) {
-    const config = this.buildConfig();
-    return axios.delete(url, config);
+    return axios.delete(url, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+    });
   }
 }

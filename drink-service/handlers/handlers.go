@@ -44,26 +44,27 @@ func GetSingleDrink(writer http.ResponseWriter, request *http.Request) {
 
 func GetDrinks(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
+	fmt.Println("Authorization:" + request.Header.Get("Authorization"))
 	writer.WriteHeader(http.StatusOK)
 	queryParams := request.URL.Query()
 
 	categories := strings.Split(queryParams.Get("categories"), ",")
 	volumeLabels := strings.Split(queryParams.Get("volumeLabels"), ",")
 	query := queryParams.Get("query")
-	ratingFrom := queryParams.Get("ratingFrom")
-	ratingTo := queryParams.Get("ratingTo")
+	gradeFrom := queryParams.Get("gradeFrom")
+	gradeTo := queryParams.Get("gradeTo")
 
 	page := queryParams.Get("page")
 	size := queryParams.Get("size")
 	sortCriteria := queryParams.Get("sortCriteria")
 	sortDirection := queryParams.Get("sortDirection")
 
-	ratingFromParsed, _ := strconv.ParseFloat(ratingFrom, 64)
-	ratingToParsed, _ := strconv.ParseFloat(ratingTo, 64)
+	gradeFromParsed, _ := strconv.ParseFloat(gradeFrom, 64)
+	gradeToParsed, _ := strconv.ParseFloat(gradeTo, 64)
 	pageParsed, _ := strconv.ParseUint(page, 10, 64)
 	sizeParsed, _ := strconv.ParseUint(size, 10, 64)
 
-	drinks, totalItems := repository.GetDrinks(categories, volumeLabels, query, ratingFromParsed, ratingToParsed, pageParsed, sizeParsed, sortCriteria, sortDirection)
+	drinks, totalItems := repository.GetDrinks(categories, volumeLabels, query, gradeFromParsed, gradeToParsed, pageParsed, sizeParsed, sortCriteria, sortDirection)
 
 	var totalPages int64
 
@@ -101,6 +102,14 @@ func CreateDrink(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
+func GetSingleImage(writer http.ResponseWriter, request *http.Request) {
+
+	params := mux.Vars(request)
+	imageName, _ := params["imageName"]
+	imageType := strings.ToLower(strings.Split(imageName, ".")[1])
+	writer.Header().Set("Content-Type", "image/"+imageType)
+	http.ServeFile(writer, request, "images/"+imageName)
+}
 func CreateUpdateDrinkImage(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 

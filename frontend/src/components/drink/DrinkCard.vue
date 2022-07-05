@@ -5,10 +5,7 @@
     max-width="300"
     elevation="4"
   >
-    <v-img
-      height="275"
-      src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Rubinov_vinjak.jpg"
-    ></v-img>
+    <v-img height="275" :src="imagePath"></v-img>
     <v-card-title
       ><span v-if="index !== undefined">{{ index + 1 }}. </span>
       {{ drink.name }}
@@ -124,6 +121,9 @@ export default {
     },
   },
   computed: {
+    imagePath() {
+      return `${process.env.VUE_APP_DRINK_SERVICE_BASE_PATH}/${this.drink.imagePath}`;
+    },
     userAuthority() {
       return this.$store.state.user.authority;
     },

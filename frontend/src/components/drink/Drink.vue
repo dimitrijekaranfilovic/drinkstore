@@ -1,88 +1,92 @@
 <template>
   <v-container>
-    <v-card class="mx-auto" v-if="drink">
-      <v-img
-        src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-        height="200px"
-      ></v-img>
-      <v-card-title>
-        {{ drink.name }}
+    <v-row align="center" justify="center" v-if="drink">
+      <v-col cols="2">
+        <v-img :src="imagePath" height="400px"></v-img>
+      </v-col>
+      <v-col cols="10">
+        <v-card class="mx-auto">
+          <v-card-title>
+            {{ drink.name }}
 
-        <v-chip class="ma-2" color="secondary" outlined>
-          {{ drink.volume }}{{ drink.volumeLabel }}
-        </v-chip>
-        <v-chip :color="drinkCategoryChipColor" text-color="white">
-          {{ drink.category | capitalize | removeUnderscore }}
-        </v-chip>
-        <!--TODO: dodaj da se prikazuje ocjena korisnika, ako je ostavio, ako nije, samo neko dugme grade ili tako nesto-->
+            <v-chip class="ma-2" color="secondary" outlined>
+              {{ drink.volume }}{{ drink.volumeLabel }}
+            </v-chip>
+            <v-chip :color="drinkCategoryChipColor" text-color="white">
+              {{ drink.category | capitalize | removeUnderscore }}
+            </v-chip>
+            <!--TODO: dodaj da se prikazuje ocjena korisnika, ako je ostavio, ako nije, samo neko dugme grade ili tako nesto-->
 
-        <v-col align="right">
-          <v-btn
-            color="red"
-            rounded
-            dark
-            v-if="itemAlreadyinCart && userAuthority === 'USER'"
-            @click="removeFromCart()"
-          >
-            <v-icon> mdi-delete </v-icon>
-            Remove from cart
-          </v-btn>
-          <v-btn
-            color="primary"
-            rounded
-            dark
-            v-else-if="!itemAlreadyinCart && userAuthority === 'USER'"
-            @click="addToCart()"
-          >
-            <v-icon> mdi-cart </v-icon>
-            Add to cart
-          </v-btn>
-          <v-btn
-            color="#ea9b09"
-            dark
-            rounded
-            @click="drinkDialog = true"
-            v-if="userAuthority === 'ADMIN'"
-          >
-            <v-icon color="white"> mdi-pencil </v-icon>
-            Edit
-          </v-btn>
-          <v-btn
-            color="red"
-            dark
-            rounded
-            @click="deleteDrink()"
-            v-if="userAuthority === 'ADMIN'"
-          >
-            <v-icon color="white"> mdi-delete-forever </v-icon>
-            Delete
-          </v-btn>
-        </v-col>
-      </v-card-title>
-      <v-chip class="ma-2" color="red" text-color="white">
-        <strong>{{ drink.price }} RSD</strong>
-      </v-chip>
-      <v-card-actions>
-        <span class="avg-grade">Average grade:</span>
-        <v-spacer></v-spacer>
-        <span class="text--lighten-2 text-caption mr-2"> (1.1) </span>
-        <v-rating
-          :value="1.2"
-          half-increments
-          hover
-          length="5"
-          readonly
-          color="yellow darken-3"
-          background-color="yellow darken-3"
-          size="18"
-        ></v-rating>
-      </v-card-actions>
-      <v-divider />
+            <v-col align="right">
+              <v-btn
+                color="red"
+                rounded
+                dark
+                v-if="itemAlreadyinCart && userAuthority === 'USER'"
+                @click="removeFromCart()"
+              >
+                <v-icon> mdi-delete </v-icon>
+                Remove from cart
+              </v-btn>
+              <v-btn
+                color="primary"
+                rounded
+                dark
+                v-else-if="!itemAlreadyinCart && userAuthority === 'USER'"
+                @click="addToCart()"
+              >
+                <v-icon> mdi-cart </v-icon>
+                Add to cart
+              </v-btn>
+              <v-btn
+                color="#ea9b09"
+                dark
+                rounded
+                @click="drinkDialog = true"
+                v-if="userAuthority === 'ADMIN'"
+              >
+                <v-icon color="white"> mdi-pencil </v-icon>
+                Edit
+              </v-btn>
+              <v-btn
+                color="red"
+                dark
+                rounded
+                @click="deleteDrink()"
+                v-if="userAuthority === 'ADMIN'"
+              >
+                <v-icon color="white"> mdi-delete-forever </v-icon>
+                Delete
+              </v-btn>
+            </v-col>
+          </v-card-title>
+          <v-chip class="ma-2" color="red" text-color="white">
+            <strong>{{ drink.price }} RSD</strong>
+          </v-chip>
+          <v-card-actions>
+            <span class="avg-grade">Average grade:</span>
+            <v-spacer></v-spacer>
+            <span class="text--lighten-2 text-caption mr-2"> (1.1) </span>
+            <v-rating
+              :value="1.2"
+              half-increments
+              hover
+              length="5"
+              readonly
+              color="yellow darken-3"
+              background-color="yellow darken-3"
+              size="18"
+            ></v-rating>
+          </v-card-actions>
+          <v-divider />
 
-      <v-card-text>
-        {{ drink.description }}
-      </v-card-text>
-    </v-card>
+          <v-card-text>
+            {{ drink.description }}
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
     <v-divider />
     <v-card>
       <v-card-title> Comments </v-card-title>
@@ -116,6 +120,7 @@
 import { categories } from "../../util/categories";
 import Comments from "../comments/Comments.vue";
 import DrinkDialog from "./DrinkDialog.vue";
+import { drinkService } from "../../services/drinkService";
 
 export default {
   name: "Drink",
@@ -124,47 +129,16 @@ export default {
     DrinkDialog,
   },
   data: () => {
-    //TODO: ovaj drink je samo placeholder
     return {
       drinkDialog: false,
-      drink: {
-        id: 1,
-        name: "Vinjak",
-        description: "Opis",
-        volume: 0.75,
-        volumeLabel: "l",
-        averageGrade: 4.8,
-        category: "BEER",
-        price: 2000,
-      },
-      comments: [
-        {
-          id: 1,
-          user: "user 1",
-          content: "AAA",
-          children: [
-            {
-              id: 2,
-              user: "user 2",
-              content: "BBB",
-              children: [
-                {
-                  id: 3,
-                  user: "user 3",
-
-                  content: "CCC",
-                },
-              ],
-            },
-            {
-              id: 4,
-              user: "user 4",
-              content: "DDD",
-            },
-          ],
-        },
-      ],
+      drink: null,
+      comments: [],
     };
+  },
+  mounted() {
+    drinkService.getSingleDrink(this.$route.params.id).then((response) => {
+      this.drink = response.data;
+    });
   },
   methods: {
     editDrink(drink) {
@@ -190,6 +164,9 @@ export default {
     },
   },
   computed: {
+    imagePath() {
+      return `${process.env.VUE_APP_DRINK_SERVICE_BASE_PATH}/${this.drink.imagePath}`;
+    },
     userAuthority() {
       return this.$store.state.user.authority;
     },
@@ -202,9 +179,6 @@ export default {
         undefined;
       return result;
     },
-  },
-  mounted() {
-    //TODO: ovdje dobavi dato pice na osnovu id-ija
   },
 };
 </script>
