@@ -2,7 +2,12 @@
   <v-snackbar v-model="snackbar" :timeout="5000">
     {{ text }}
     <template v-slot:action="{ attrs }">
-      <v-btn color="primary" text v-bind="attrs" @click="$emit('toastClosing')">
+      <v-btn
+        color="primary"
+        text
+        v-bind="attrs"
+        @click="$emit('toast-closing')"
+      >
         Close
       </v-btn>
     </template>

@@ -213,7 +213,11 @@
         </v-stepper>
       </v-col>
     </v-row>
-    <toast :snackbar="snackbar" :text="text" @toastClosing="snackbar = false" />
+    <toast
+      :snackbar="snackbar"
+      :text="text"
+      @toast-closing="snackbar = false"
+    />
   </v-container>
 </template>
 

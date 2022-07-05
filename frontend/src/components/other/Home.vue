@@ -2,7 +2,7 @@
   <v-container>
     <search-filter-drinks
       :searchParams="searchParams"
-      @searchParamsUpdated="search"
+      @search-params-updated="search"
     />
     <v-row v-if="userAuthority === 'ADMIN'">
       <v-col cols="12">
@@ -31,7 +31,11 @@
       :dialog="drinkDialog"
       @drink-added="addDrink($event)"
     />
-    <toast :snackbar="snackbar" :text="text" @toastClosing="snackbar = false" />
+    <toast
+      :snackbar="snackbar"
+      :text="text"
+      @toast-closing="snackbar = false"
+    />
   </v-container>
 </template>
 

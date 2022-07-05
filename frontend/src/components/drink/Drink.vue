@@ -117,7 +117,12 @@
       :confirmDialog="confirmDialog"
       :text="dialogDeleteText"
       :title="dialogDeleteTitle"
-      @dialogClosing="closeConfirmDialog($event)"
+      @dialog-closing="closeConfirmDialog($event)"
+    />
+    <toast
+      :snackbar="snackbar"
+      :text="text"
+      @toast-closing="snackbar = false"
     />
   </v-container>
 </template>
@@ -128,6 +133,7 @@ import Comments from "../comments/Comments.vue";
 import DrinkDialog from "./DrinkDialog.vue";
 import { drinkService } from "../../services/drinkService";
 import ConfirmDialog from "../other/ConfirmDialog.vue";
+import Toast from "../other/Toast.vue";
 
 export default {
   name: "Drink",
@@ -135,9 +141,12 @@ export default {
     Comments,
     DrinkDialog,
     ConfirmDialog,
+    Toast,
   },
   data: () => {
     return {
+      snackbar: false,
+      text: "",
       confirmDialog: false,
       drinkDialog: false,
       drink: null,
@@ -158,7 +167,34 @@ export default {
       } else this.confirmDialog = false;
     },
     editDrink(drink) {
-      console.log("Edit drink ", drink);
+      let drinkUpdatePayload = { ...drink };
+      drinkUpdatePayload.price += "";
+      drinkUpdatePayload.volume += "";
+      delete drinkUpdatePayload.image;
+      drinkService
+        .updateDrink(this.drink.id, drinkUpdatePayload)
+        .then((_) => {
+          if (drink.image !== null) {
+            drinkService
+              .createDrinkImage(drink.id, drink.image)
+              .then((_) => {
+                this.$router.go(0);
+              })
+              .catch((error) => {
+                if (error.response) this.text = error.response.data.message;
+                else
+                  this.text = "An error occurred while uploading drink image.";
+                this.snackbar = true;
+              });
+          } else {
+            this.$router.go(0);
+          }
+        })
+        .catch((error) => {
+          if (error.response) this.text = error.response.data.message;
+          else this.text = "An error occurred while updating drink.";
+          this.snackbar = true;
+        });
     },
     deleteDrink() {
       drinkService.deleteDrink(this.$route.params.id).then((_) => {

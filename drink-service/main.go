@@ -17,19 +17,18 @@ func main() {
 
 	router := mux.NewRouter()
 
-	//TODO: dodati dobavljanje slika pica
 	//svi
-	router.HandleFunc("/api/drinks", requestHandler.GetDrinks).Methods("GET")
+	router.HandleFunc("/api/drinks", requestHandler.GetDrinks).Methods("GET") //povezano
 	//svi
-	router.HandleFunc("/api/drinks/{id}", requestHandler.GetSingleDrink).Methods("GET")
+	router.HandleFunc("/api/drinks/{id}", requestHandler.GetSingleDrink).Methods("GET") //povezano
 	//admin
-	router.HandleFunc("/api/drinks", requestHandler.CreateDrink).Methods("POST")
+	router.HandleFunc("/api/drinks", requestHandler.CreateDrink).Methods("POST") //povezano
 	//admin
-	router.HandleFunc("/api/drinks/{id}/images", requestHandler.CreateUpdateDrinkImage).Methods("POST")
+	router.HandleFunc("/api/drinks/{id}/images", requestHandler.CreateUpdateDrinkImage).Methods("POST") //povezano
 	//admin
-	router.HandleFunc("/api/drinks/{id}", requestHandler.UpdateDrink).Methods("PUT")
+	router.HandleFunc("/api/drinks/{id}", requestHandler.UpdateDrink).Methods("PUT") //povezano
 	//admin
-	router.HandleFunc("/api/drinks/{id}", requestHandler.DeleteDrink).Methods("DELETE")
+	router.HandleFunc("/api/drinks/{id}", requestHandler.DeleteDrink).Methods("DELETE") //povezano
 	//user
 	router.HandleFunc("/api/drinks/{id}/grades", requestHandler.CreateUserGrade).Methods("POST")
 	//user
@@ -39,7 +38,7 @@ func main() {
 	//user
 	router.HandleFunc("/api/drinks/{id}/grade-for-user", requestHandler.CheckDrinkGradeForUser).Methods("GET")
 	//svi
-	router.HandleFunc("/api/drinks/images/{imageName}", requestHandler.GetSingleImage).Methods("GET")
+	router.HandleFunc("/api/drinks/images/{imageName}", requestHandler.GetSingleImage).Methods("GET") //povezano
 	corsHandler := cors.New(cors.Options{
 		AllowCredentials: true,
 		AllowedOrigins:   []string{"http://localhost:9090"},

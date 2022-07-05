@@ -24,7 +24,7 @@ func CreateUser(user *model.User) error {
 
 func FindUserByUsername(username string) (model.User, error) {
 	var user model.User
-	result := database.Driver.First(&user, "username = ?", username)
+	result := database.Driver.First(&user, "username = ? AND banned = false", username)
 	return user, result.Error
 }
 

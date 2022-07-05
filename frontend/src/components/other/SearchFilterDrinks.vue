@@ -2,7 +2,6 @@
   <v-container>
     <v-row class="search-bar">
       <v-col cols="12" md="8">
-        <!--ovo gleda i naziv i opis i mozda da ih na bekendu rangiram po relevantnosti-->
         <v-text-field
           label="Enter keyword"
           v-model="searchParams.query"
@@ -13,7 +12,7 @@
         <v-btn
           color="primary"
           class="search-btn"
-          @click="$emit('searchParamsUpdated')"
+          @click="$emit('search-params-updated')"
           >Search</v-btn
         >
         <v-btn @click="dialog = !dialog" class="search-btn">
@@ -117,7 +116,7 @@
           </v-card-text>
           <v-card-actions>
             <v-btn @click="dialog = false">Cancel</v-btn>
-            <v-btn color="primary" @click="$emit('searchParamsUpdated')"
+            <v-btn color="primary" @click="$emit('search-params-updated')"
               >Apply</v-btn
             >
           </v-card-actions>

@@ -113,9 +113,17 @@ export default {
     };
   },
   mounted() {
-    if (this.drinkToEdit) this.drink = { ...this.drinkToEdit };
+    if (this.drinkToEdit) {
+      this.updateDrink();
+    }
   },
   methods: {
+    updateDrink() {
+      this.drink = { ...this.drinkToEdit };
+      this.drink.image = null;
+      delete this.drink.averageGrade;
+      delete this.drink.imagePath;
+    },
     emitConfirmEvent() {
       let eventName;
       if (this.drinkToEdit) {
@@ -143,24 +151,21 @@ export default {
         this.drink.description === "" ||
         this.drink.volume == 0 ||
         this.drink.volumeLabel === "" ||
-        this.drink.image === null ||
+        (this.drink.image === null && this.drinkToEdit === undefined) ||
         this.drink.category === "" ||
         this.drink.price == 0
       );
-
-      // name: "",
-      //   description: "",
-      //   volume: "",
-      //   volumeLabel: "",
-      //   image: null,
-      //   category: "",
-      //   price: 0,
     },
     confirmButtonText() {
       return this.drinkToEdit === undefined ? "Add" : "Save changes";
     },
     dialogTitleText() {
       return this.drinkToEdit === undefined ? "Add drink" : "Edit drink";
+    },
+  },
+  watch: {
+    dialog(newDialog) {
+      if (newDialog === true) this.updateDrink();
     },
   },
 };
