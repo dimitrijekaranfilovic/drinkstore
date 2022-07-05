@@ -4,9 +4,11 @@ import (
 	"comment-service/model"
 	"context"
 	"encoding/json"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"time"
 )
@@ -42,11 +44,47 @@ func (mongoHandler *MongoHandler) CreateComment(writer http.ResponseWriter, requ
 			{"userId", userId},
 			{"content", commentCreationDTO.Content},
 			{"drinkId", commentCreationDTO.DrinkId},
+			{"children", []model.CommentSavedDTO{}},
 		})
 		if err != nil {
 			writeInternalServerError(writer, request, err)
 		} else {
-			json.NewEncoder(writer).Encode(model.ToCommentDTO(&commentCreationDTO, getDocumentId(res)))
+			json.NewEncoder(writer).Encode(model.ToCommentDTOFromCommentCreationDTO(&commentCreationDTO, getDocumentId(res)))
+		}
+	} else {
+		objectId, _ := primitive.ObjectIDFromHex(commentCreationDTO.ParentCommentId)
+		filter := bson.M{
+			"$or": []bson.M{{"_id": objectId}, {"id": objectId}}}
+		//options := options.FindOptions().SetProjection(bson.D{{"type", 1}, {"rating", 1}, {"_id", 0}})
+		findOneOptions := &options.FindOneOptions{}
+		findOneOptions.SetProjection(bson.D{
+			{"id", 1},
+			{"_id", 1},
+			{"children", 1},
+			{"user", 1},
+			{"content", 1},
+			{"userId", 1},
+			{"drinkId", 1},
+		})
+		//opts := options.FindOneOptions().SetProjection(bson.D{{"type", 1}, {"rating", 1}, {"_id", 0}})
+		result := mongoHandler.CommentCollection.FindOne(ctx, filter, findOneOptions)
+		parentComment := model.CommentSavedDTO{}
+		result.Decode(parentComment)
+		fmt.Printf("parent comment id: %s\n", parentComment.Id.Hex())
+		fmt.Println("parent comment content: " + parentComment.Content)
+		fmt.Printf("parent comment children num: %d\n", len(parentComment.Children))
+		newComment := model.ToCommentSavedDTOFromCommentCreationDTO(commentCreationDTO)
+		newCommentId := primitive.NewObjectID()
+		newComment.Id = newCommentId
+		newComment.UserID = uint(userId)
+		parentComment.Children = append(parentComment.Children, newComment)
+
+		update := bson.D{{"$set", bson.D{{"children", parentComment.Children}}}}
+		_, err3 := mongoHandler.CommentCollection.UpdateOne(ctx, filter, update)
+		if err3 != nil {
+			writeInternalServerError(writer, request, err3)
+		} else {
+			json.NewEncoder(writer).Encode(model.ToCommentDTOFromCommentSavedDTO(newComment))
 		}
 	}
 }
