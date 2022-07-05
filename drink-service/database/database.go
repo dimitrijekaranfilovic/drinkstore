@@ -99,7 +99,6 @@ func ConnectToDatabase() {
 			Price:        220,
 		},
 		{
-			Id:           5,
 			Name:         "Multivitamin",
 			ImagePath:    "images/multivitamin.jpg",
 			Description:  "Opis",

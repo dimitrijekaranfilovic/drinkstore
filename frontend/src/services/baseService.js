@@ -49,4 +49,15 @@ export default class BaseService {
       },
     });
   }
+
+  postFormData(url, file, filename) {
+    const formData = new FormData();
+    formData.append(filename, file);
+    return axios.post(url, formData, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  }
 }

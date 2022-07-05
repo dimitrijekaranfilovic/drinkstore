@@ -29,7 +29,13 @@
           </v-row>
           <v-row>
             <v-col cols="12" md="6">
-              <v-text-field label="Volume" v-model="drink.volume" />
+              <v-text-field
+                label="Volume"
+                type="number"
+                step="0.1"
+                min="0"
+                v-model="drink.volume"
+              />
             </v-col>
             <v-col cols="12" md="6">
               <v-select
@@ -73,9 +79,12 @@
       </v-card-text>
       <v-card-actions>
         <v-btn @click="$emit('dialog-closing')">Cancel</v-btn>
-        <v-btn color="primary" @click="emitConfirmEvent()">{{
-          confirmButtonText
-        }}</v-btn>
+        <v-btn
+          color="primary"
+          @click="emitConfirmEvent()"
+          :disabled="btnDisabled"
+          >{{ confirmButtonText }}</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -95,7 +104,7 @@ export default {
       drink: {
         name: "",
         description: "",
-        volume: "",
+        volume: 0,
         volumeLabel: "",
         image: null,
         category: "",
@@ -114,10 +123,39 @@ export default {
       } else {
         eventName = "drink-added";
       }
-      this.$emit(eventName, this.drink);
+
+      this.$emit(eventName, { ...this.drink });
+      this.drink = {
+        name: "",
+        description: "",
+        volume: 0,
+        volumeLabel: "",
+        image: null,
+        category: "",
+        price: 0,
+      };
     },
   },
   computed: {
+    btnDisabled() {
+      return (
+        this.drink.name === "" ||
+        this.drink.description === "" ||
+        this.drink.volume == 0 ||
+        this.drink.volumeLabel === "" ||
+        this.drink.image === null ||
+        this.drink.category === "" ||
+        this.drink.price == 0
+      );
+
+      // name: "",
+      //   description: "",
+      //   volume: "",
+      //   volumeLabel: "",
+      //   image: null,
+      //   category: "",
+      //   price: 0,
+    },
     confirmButtonText() {
       return this.drinkToEdit === undefined ? "Add" : "Save changes";
     },

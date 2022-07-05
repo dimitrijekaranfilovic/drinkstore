@@ -28,9 +28,11 @@
     <v-card-actions>
       <span class="avg-grade">Average grade:</span>
       <v-spacer></v-spacer>
-      <span class="text--lighten-2 text-caption mr-2"> (1.1) </span>
+      <span class="text--lighten-2 text-caption mr-2">
+        ({{ drink.averageGrade }})
+      </span>
       <v-rating
-        :value="1.2"
+        :value="drink.averageGrade"
         half-increments
         hover
         length="5"
@@ -46,8 +48,6 @@
       {{ drink.description }}
     </v-card-text>
     <v-card-actions>
-      <!--TODO: dodaj v-if za admina-->
-
       <v-tooltip bottom v-if="itemAlreadyinCart && userAuthority === 'USER'">
         <template v-slot:activator="{ on, attrs }">
           <v-btn

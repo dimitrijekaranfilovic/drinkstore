@@ -14,10 +14,10 @@ type Error struct {
 type DrinkCreateUpdateDTO struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
-	Volume      float32 `json:"volume"`
+	Volume      float32 `json:"volume,string"`
 	VolumeLabel string  `json:"volumeLabel"`
 	Category    string  `json:"category"`
-	Price       uint    `json:"price"`
+	Price       uint    `json:"price,string"`
 }
 
 type UserGradeDTO struct {

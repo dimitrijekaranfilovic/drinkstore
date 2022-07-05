@@ -52,7 +52,7 @@
                 color="red"
                 dark
                 rounded
-                @click="deleteDrink()"
+                @click="confirmDialog = true"
                 v-if="userAuthority === 'ADMIN'"
               >
                 <v-icon color="white"> mdi-delete-forever </v-icon>
@@ -113,6 +113,12 @@
       @dialog-closing="drinkDialog = false"
       @drink-edited="editDrink($event)"
     />
+    <confirm-dialog
+      :confirmDialog="confirmDialog"
+      :text="dialogDeleteText"
+      :title="dialogDeleteTitle"
+      @dialogClosing="closeConfirmDialog($event)"
+    />
   </v-container>
 </template>
 
@@ -121,18 +127,22 @@ import { categories } from "../../util/categories";
 import Comments from "../comments/Comments.vue";
 import DrinkDialog from "./DrinkDialog.vue";
 import { drinkService } from "../../services/drinkService";
+import ConfirmDialog from "../other/ConfirmDialog.vue";
 
 export default {
   name: "Drink",
   components: {
     Comments,
     DrinkDialog,
+    ConfirmDialog,
   },
   data: () => {
     return {
+      confirmDialog: false,
       drinkDialog: false,
       drink: null,
       comments: [],
+      dialogDeleteTitle: "Drink deletion",
     };
   },
   mounted() {
@@ -141,11 +151,19 @@ export default {
     });
   },
   methods: {
+    closeConfirmDialog(event) {
+      if (event.answer === "OK") {
+        this.deleteDrink();
+        this.confirmDialog = false;
+      } else this.confirmDialog = false;
+    },
     editDrink(drink) {
       console.log("Edit drink ", drink);
     },
     deleteDrink() {
-      console.log("delete drink");
+      drinkService.deleteDrink(this.$route.params.id).then((_) => {
+        this.$router.push({ name: "Home" });
+      });
     },
     addToCart() {
       let drinkId = this.drink.id;
@@ -164,6 +182,11 @@ export default {
     },
   },
   computed: {
+    dialogDeleteText() {
+      if (this.drink)
+        return `Are you sure you want to delete ${this.drink.name}?`;
+      else "Are you sure you want to delete this drink?";
+    },
     imagePath() {
       return `${process.env.VUE_APP_DRINK_SERVICE_BASE_PATH}/${this.drink.imagePath}`;
     },

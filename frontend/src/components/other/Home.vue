@@ -31,6 +31,7 @@
       :dialog="drinkDialog"
       @drink-added="addDrink($event)"
     />
+    <toast :snackbar="snackbar" :text="text" @toastClosing="snackbar = false" />
   </v-container>
 </template>
 
@@ -39,12 +40,15 @@ import DrinkCard from "../drink/DrinkCard.vue";
 import SearchFilterDrinks from "./SearchFilterDrinks.vue";
 import DrinkDialog from "../drink/DrinkDialog.vue";
 import { drinkService } from "../../services/drinkService";
+import Toast from "../other/Toast.vue";
 
 export default {
   name: "Home",
-  components: { DrinkCard, SearchFilterDrinks, DrinkDialog },
+  components: { DrinkCard, SearchFilterDrinks, DrinkDialog, Toast },
   data: () => {
     return {
+      snackbar: false,
+      text: "",
       drinkDialog: false,
       searchParams: {
         query: "",
@@ -89,7 +93,29 @@ export default {
       this.drinkDialog = false;
     },
     addDrink(drink) {
-      console.log("Add drink ", drink);
+      let drinkPayload = { ...drink };
+      delete drinkPayload.image;
+      drinkService
+        .createDrink(drinkPayload)
+        .then((response) => {
+          let drinkId = response.data.id;
+          drinkService
+            .createDrinkImage(drinkId, drink.image)
+            .then((_) => {
+              this.text = "Drink successfully created.";
+              this.snackbar = true;
+            })
+            .catch((error) => {
+              if (error.response) this.text = error.response.data.message;
+              else this.text = "An error occurred while creating drink.";
+              this.snackbar = true;
+            });
+        })
+        .catch((error) => {
+          if (error.response) this.text = error.response.data.message;
+          else this.text = "An error occurred while uploading image for drink.";
+          this.snackbar = true;
+        });
     },
   },
   watch: {

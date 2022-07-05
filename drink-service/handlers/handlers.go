@@ -44,7 +44,6 @@ func GetSingleDrink(writer http.ResponseWriter, request *http.Request) {
 
 func GetDrinks(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	fmt.Println("Authorization:" + request.Header.Get("Authorization"))
 	writer.WriteHeader(http.StatusOK)
 	queryParams := request.URL.Query()
 

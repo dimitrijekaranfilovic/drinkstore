@@ -21,7 +21,6 @@
         )"
         :key="drinkIndex"
       >
-        <!-- <drink-card :drink="drink" :key="drink.id" /> -->
         <drink-card :drink="drink" :key="drink.id" :index="drinkIndex" />
       </v-col>
     </v-row>
