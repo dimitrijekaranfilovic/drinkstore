@@ -4,8 +4,7 @@
       :searchParams="searchParams"
       @searchParamsUpdated="search"
     />
-    <!--dodaj v-if za to je li korisnik ulogovan i je li admin-->
-    <v-row>
+    <v-row v-if="userAuthority === 'ADMIN'">
       <v-col cols="12">
         <v-btn color="primary" depressed @click="drinkDialog = true">
           <v-icon> mdi-bookmark-plus </v-icon>
@@ -112,6 +111,11 @@ export default {
       ],
       page: 1,
     };
+  },
+  computed: {
+    userAuthority() {
+      return this.$store.state.user.authority;
+    },
   },
   methods: {
     search() {

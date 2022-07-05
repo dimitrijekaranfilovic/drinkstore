@@ -51,7 +51,7 @@
     <v-card-actions>
       <!--TODO: dodaj v-if za admina-->
 
-      <v-tooltip bottom v-if="itemAlreadyinCart">
+      <v-tooltip bottom v-if="itemAlreadyinCart && userAuthority === 'USER'">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             color="red"
@@ -67,7 +67,10 @@
         <span>Remove from cart</span>
       </v-tooltip>
 
-      <v-tooltip bottom v-else>
+      <v-tooltip
+        bottom
+        v-else-if="!itemAlreadyinCart && userAuthority === 'USER'"
+      >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             color="primary"
@@ -121,6 +124,9 @@ export default {
     },
   },
   computed: {
+    userAuthority() {
+      return this.$store.state.user.authority;
+    },
     drinkCategoryChipColor() {
       return categories.find((c) => c.value === this.drink.category).color;
     },

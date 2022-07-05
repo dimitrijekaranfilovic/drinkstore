@@ -38,20 +38,20 @@
                   >
                     <v-text-field
                       :rules="firstNameRules"
-                      v-model="firstStep.firstName"
+                      v-model="payload.firstName"
                       label="First name"
                       :counter="40"
                       maxlength="40"
                     />
                     <v-text-field
                       :rules="lastNameRules"
-                      v-model="firstStep.lastName"
+                      v-model="payload.lastName"
                       label="Last name"
                       :counter="40"
                       maxlength="40"
                     />
                     <v-text-field
-                      v-model="firstStep.username"
+                      v-model="payload.username"
                       :rules="usernameRules"
                       :counter="30"
                       maxlength="30"
@@ -59,7 +59,7 @@
                       required
                     />
                     <v-text-field
-                      v-model="firstStep.password"
+                      v-model="payload.password"
                       :rules="passwordRules"
                       label="Password"
                       :type="valuePassword ? 'password' : 'text'"
@@ -70,7 +70,7 @@
                       required
                     />
                     <v-text-field
-                      v-model="firstStep.confirmPassword"
+                      v-model="confirmedPassword"
                       :rules="confirmPasswordRules"
                       label="Confirm password"
                       :type="valueConfirmPassword ? 'password' : 'text'"
@@ -116,14 +116,14 @@
                       <v-col cols="8">
                         <v-text-field
                           label="Street"
-                          v-model="secondStep.street"
+                          v-model="payload.address.street"
                           :rules="stringRules"
                         />
                       </v-col>
                       <v-col cols="4">
                         <v-text-field
                           label="Number"
-                          v-model="secondStep.number"
+                          v-model="payload.address.number"
                           :rules="stringRules"
                         />
                       </v-col>
@@ -133,14 +133,14 @@
                       <v-col cols="8">
                         <v-text-field
                           label="City"
-                          v-model="secondStep.city"
+                          v-model="payload.address.city"
                           :rules="stringRules"
                         />
                       </v-col>
                       <v-col cols="4">
                         <v-text-field
                           label="Zip code"
-                          v-model="secondStep.zipCode"
+                          v-model="payload.address.zipCode"
                           :rules="stringRules"
                         />
                       </v-col>
@@ -149,7 +149,7 @@
                       <v-col cols="12">
                         <v-text-field
                           label="Country"
-                          v-model="secondStep.country"
+                          v-model="payload.address.country"
                           :rules="stringRules"
                         />
                       </v-col>
@@ -213,6 +213,7 @@
         </v-stepper>
       </v-col>
     </v-row>
+    <toast :snackbar="snackbar" :text="text" @toastClosing="snackbar = false" />
   </v-container>
 </template>
 
@@ -221,11 +222,16 @@ import { passwordRules } from "../../util/passwordRules";
 import { usernameRules } from "../../util/usernameRules";
 import { firstNameRules } from "../../util/firstNameRules";
 import { lastNameRules } from "../../util/lastNameRules";
+import { userService } from "../../services/userService";
+import Toast from "../other/Toast.vue";
 
 export default {
   name: "Register",
+  components: { Toast },
   data() {
     return {
+      snackbar: false,
+      text: "",
       currentStep: 1,
       usernameRules: usernameRules,
       passwordRules: passwordRules,
@@ -236,19 +242,19 @@ export default {
       validSecondStep: false,
       valuePassword: String,
       valueConfirmPassword: String,
-      firstStep: {
+      confirmedPassword: "",
+      payload: {
         username: "",
         password: "",
-        confirmPassword: "",
         firstName: "",
         lastName: "",
-      },
-      secondStep: {
-        street: "",
-        number: "",
-        city: "",
-        zipCode: "",
-        country: "",
+        address: {
+          street: "",
+          number: "",
+          city: "",
+          zipCode: "",
+          country: "",
+        },
       },
     };
   },
@@ -256,7 +262,7 @@ export default {
     confirmPasswordRules() {
       return [
         ...passwordRules,
-        (pass) => this.firstStep.password === pass || "Passwords don't match.",
+        (pass) => this.payload.password === pass || "Passwords don't match.",
       ];
     },
   },
@@ -269,8 +275,17 @@ export default {
       this.currentStep -= 1;
     },
     register() {
-      const payload = { ...this.firstStep, ...this.secondStep };
-      console.log(payload);
+      userService
+        .register(this.payload)
+        .then((_) => {
+          this.$router.push({ name: "Login" });
+        })
+        .catch((error) => {
+          if (error.response) this.text = error.response.data.message;
+          else this.text = "An error occurred while registering user.";
+          this.snackbar = true;
+        });
+      //console.log(this.payload);
     },
   },
 };

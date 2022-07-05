@@ -28,3 +28,8 @@ type UserGradeDTO struct {
 type UserIdDTO struct {
 	UserId int `json:"userId"`
 }
+
+type GradeCheckDTO struct {
+	GradeExists bool  `json:"gradeExists"`
+	GradeValue  int16 `json:"gradeValue"`
+}

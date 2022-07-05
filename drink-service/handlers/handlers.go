@@ -15,6 +15,20 @@ import (
 	"time"
 )
 
+func CheckDrinkGradeForUser(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+	drinkId, _ := strconv.ParseUint(params["id"], 10, 64)
+	userId := getUserId(request)
+
+	userGrade, err := repository.GetGradeForDrinkAndUser(uint(userId), uint(drinkId))
+	if err != nil {
+		json.NewEncoder(writer).Encode(model.GradeCheckDTO{GradeExists: false, GradeValue: -1})
+	} else {
+		json.NewEncoder(writer).Encode(model.GradeCheckDTO{GradeExists: true, GradeValue: int16(userGrade.Grade)})
+	}
+}
+
 func GetSingleDrink(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(request)

@@ -19,9 +19,9 @@ func main() {
 	router := mux.NewRouter()
 
 	//svi
-	router.HandleFunc("/api/users/register", requestHandler.RegisterUser).Methods("POST")
+	router.HandleFunc("/api/users/register", requestHandler.RegisterUser).Methods("POST") //povezano
 	//svi
-	router.HandleFunc("/api/users/authenticate", requestHandler.Authenticate).Methods("POST")
+	router.HandleFunc("/api/users/authenticate", requestHandler.Authenticate).Methods("POST") //povezano
 	//admin
 	router.HandleFunc("/api/users/ban/{id}", requestHandler.BanUser).Methods("GET")
 	//samo ostali servisi

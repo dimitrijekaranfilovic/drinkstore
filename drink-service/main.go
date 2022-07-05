@@ -36,7 +36,8 @@ func main() {
 	router.HandleFunc("/api/drinks/{drinkId}/grades/{gradeId}", requestHandler.UpdateUserGrade).Methods("PUT")
 	//user
 	router.HandleFunc("/api/drinks/{drinkId}/grades/{gradeId}", requestHandler.DeleteUserGrade).Methods("DELETE")
-
+	//user
+	router.HandleFunc("/api/drinks/{id}/grade-for-user", requestHandler.CheckDrinkGradeForUser).Methods("GET")
 	corsHandler := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:9090"},
 		AllowedMethods: []string{"OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE"},

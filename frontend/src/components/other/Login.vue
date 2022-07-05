@@ -42,6 +42,7 @@
                   color="primary"
                   type="submit"
                   :loading="loginBtnLoading"
+                  :disabled="payload.username === '' || payload.password === ''"
                 >
                   Login
                 </v-btn>
@@ -55,21 +56,16 @@
         </v-col>
       </v-row>
     </form>
-    <v-snackbar v-model="snackbar" :timeout="5000">
-      {{ text }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="primary" text v-bind="attrs" @click="snackbar = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
+    <toast :snackbar="snackbar" :text="text" @toastClosing="snackbar = false" />
   </v-container>
 </template>
 
 <script>
 import { userService } from "../../services/userService";
 import jwtDecode from "jwt-decode";
+import Toast from "../other/Toast.vue";
 export default {
+  components: { Toast },
   data: () => {
     return {
       valuePassword: String,

@@ -45,3 +45,12 @@ func CheckForGradeForUserAndDrink(userId uint, drinkId uint) error {
 func UpdateUserGrade(userGrade *model.UserGrade) {
 	database.Driver.Save(userGrade)
 }
+
+func GetGradeForDrinkAndUser(userId uint, drinkId uint) (model.UserGrade, error) {
+	var userGrade model.UserGrade
+	database.Driver.First(&userGrade, "user_id = ? AND drink_id = ?", userId, drinkId)
+	if userGrade.Id == 0 {
+		return userGrade, errors.New("Grade does not exist.")
+	}
+	return userGrade, nil
+}

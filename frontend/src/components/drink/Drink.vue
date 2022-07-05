@@ -14,8 +14,6 @@
         <v-chip :color="drinkCategoryChipColor" text-color="white">
           {{ drink.category | capitalize | removeUnderscore }}
         </v-chip>
-        <!-- TODO: za ovo dodaj v-if-->
-        <!-- TODO: mozda dodaj da admin moze da oznaci da vise nije na stanju-->
         <!--TODO: dodaj da se prikazuje ocjena korisnika, ako je ostavio, ako nije, samo neko dugme grade ili tako nesto-->
 
         <v-col align="right">
@@ -23,21 +21,39 @@
             color="red"
             rounded
             dark
-            v-if="itemAlreadyinCart"
+            v-if="itemAlreadyinCart && userAuthority === 'USER'"
             @click="removeFromCart()"
           >
             <v-icon> mdi-delete </v-icon>
             Remove from cart
           </v-btn>
-          <v-btn color="primary" rounded dark v-else @click="addToCart()">
+          <v-btn
+            color="primary"
+            rounded
+            dark
+            v-else-if="!itemAlreadyinCart && userAuthority === 'USER'"
+            @click="addToCart()"
+          >
             <v-icon> mdi-cart </v-icon>
             Add to cart
           </v-btn>
-          <v-btn color="#ea9b09" dark rounded @click="drinkDialog = true">
+          <v-btn
+            color="#ea9b09"
+            dark
+            rounded
+            @click="drinkDialog = true"
+            v-if="userAuthority === 'ADMIN'"
+          >
             <v-icon color="white"> mdi-pencil </v-icon>
             Edit
           </v-btn>
-          <v-btn color="red" dark rounded @click="deleteDrink()">
+          <v-btn
+            color="red"
+            dark
+            rounded
+            @click="deleteDrink()"
+            v-if="userAuthority === 'ADMIN'"
+          >
             <v-icon color="white"> mdi-delete-forever </v-icon>
             Delete
           </v-btn>
@@ -72,7 +88,7 @@
       <v-card-title> Comments </v-card-title>
       <v-card-text>
         <v-container>
-          <v-row>
+          <v-row v-if="userAuthority === 'USER'">
             <v-col cols="12" md="10">
               <v-text-field label="Enter comment" />
             </v-col>
@@ -174,6 +190,9 @@ export default {
     },
   },
   computed: {
+    userAuthority() {
+      return this.$store.state.user.authority;
+    },
     drinkCategoryChipColor() {
       return categories.find((c) => c.value === this.drink.category).color;
     },
