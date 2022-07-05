@@ -15,7 +15,6 @@
             <v-chip :color="drinkCategoryChipColor" text-color="white">
               {{ drink.category | capitalize | removeUnderscore }}
             </v-chip>
-            <!--TODO: dodaj da se prikazuje ocjena korisnika, ako je ostavio, ako nije, samo neko dugme grade ili tako nesto-->
 
             <v-col align="right">
               <v-btn
@@ -63,12 +62,57 @@
           <v-chip class="ma-2" color="red" text-color="white">
             <strong>{{ drink.price }} RSD</strong>
           </v-chip>
+          <v-card-actions v-if="userAuthority === 'USER'">
+            <span>Your grade:</span>
+            <v-spacer />
+
+            <span
+              v-if="!userGrade.gradeExists"
+              class="text--lighten-2 text-caption mr-2"
+            >
+              Not graded
+            </span>
+            <v-btn v-if="!userGrade.gradeExists" @click="grade()">Grade</v-btn>
+            <span
+              class="text--lighten-2 text-caption mr-2"
+              v-if="userGrade.gradeExists"
+            >
+              {{ userGrade.gradeValue }}
+            </span>
+            <v-rating
+              v-if="userGrade.gradeExists"
+              :value="userGrade.gradeValue"
+              half-increments
+              hover
+              length="5"
+              readonly
+              color="yellow darken-3"
+              background-color="yellow darken-3"
+              size="18"
+            ></v-rating>
+            <v-btn
+              color="orange"
+              dark
+              v-if="userGrade.gradeExists"
+              @click="changeGrade()"
+              >Change grade</v-btn
+            >
+            <v-btn
+              dark
+              color="red"
+              v-if="userGrade.gradeExists"
+              @click="removeGrade()"
+              >Remove grade</v-btn
+            >
+          </v-card-actions>
           <v-card-actions>
             <span class="avg-grade">Average grade:</span>
-            <v-spacer></v-spacer>
-            <span class="text--lighten-2 text-caption mr-2"> (1.1) </span>
+            <v-spacer />
+            <span class="text--lighten-2 text-caption mr-2">
+              {{ drink.averageGrade }}
+            </span>
             <v-rating
-              :value="1.2"
+              :value="drink.averageGrade"
               half-increments
               hover
               length="5"
@@ -124,6 +168,14 @@
       :text="text"
       @toast-closing="snackbar = false"
     />
+    <grading-dialog
+      :dialog="gradingDialog"
+      :dialogTitleText="gradingDialogTitleText"
+      :gradeToChange="userGrade.gradeValue"
+      @dialog-closing="gradingDialog = false"
+      @grade-created="createGrade($event)"
+      @grade-updated="updateGrade($event)"
+    />
   </v-container>
 </template>
 
@@ -134,6 +186,7 @@ import DrinkDialog from "./DrinkDialog.vue";
 import { drinkService } from "../../services/drinkService";
 import ConfirmDialog from "../other/ConfirmDialog.vue";
 import Toast from "../other/Toast.vue";
+import GradingDialog from "../other/GradingDialog.vue";
 
 export default {
   name: "Drink",
@@ -142,9 +195,17 @@ export default {
     DrinkDialog,
     ConfirmDialog,
     Toast,
+    GradingDialog,
   },
   data: () => {
     return {
+      userGrade: {
+        gradeExists: false,
+        gradeValue: undefined,
+        gradeId: -1,
+      },
+      gradingDialog: false,
+      gradingDialogTitleText: "Grade",
       snackbar: false,
       text: "",
       confirmDialog: false,
@@ -158,8 +219,54 @@ export default {
     drinkService.getSingleDrink(this.$route.params.id).then((response) => {
       this.drink = response.data;
     });
+    drinkService.checkUserGrade(this.$route.params.id).then((response) => {
+      this.userGrade = response.data;
+      if (this.userGrade.gradeValue === -1)
+        this.userGrade.gradeValue = undefined;
+    });
   },
   methods: {
+    removeGrade() {
+      drinkService
+        .deleteUserGrade(this.$route.params.id, this.userGrade.gradeId)
+        .then((_) => {
+          this.userGrade.gradeExists = false;
+          this.userGrade.gradeValue = undefined;
+        });
+    },
+    createGrade(grade) {
+      drinkService
+        .addUserGrade(this.$route.params.id, { grade: grade })
+        .then((response) => {
+          this.gradingDialog = false;
+          this.userGrade.gradeExists = true;
+          this.userGrade.gradeValue = grade;
+          this.userGrade.gradeId = response.data.id;
+        });
+    },
+    updateGrade(grade) {
+      drinkService
+        .updateUserGrade(this.$route.params.id, this.userGrade.gradeId, {
+          grade: grade,
+        })
+        .then((response) => {
+          this.gradingDialog = false;
+          this.userGrade.gradeExists = true;
+          this.userGrade.gradeValue = grade;
+          this.userGrade.gradeId = response.data.id;
+        });
+    },
+
+    grade() {
+      this.gradingDialogTitleText = "Grade";
+      this.gradingDialog = true;
+      this.gradeToChange = 0;
+    },
+    changeGrade() {
+      this.dialogDeleteTitle = "Change grade";
+      this.gradingDialog = true;
+      this.gradeToChange = this.userGrade.gradeValue;
+    },
     closeConfirmDialog(event) {
       if (event.answer === "OK") {
         this.deleteDrink();

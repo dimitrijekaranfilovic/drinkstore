@@ -23,9 +23,9 @@ func CheckDrinkGradeForUser(writer http.ResponseWriter, request *http.Request) {
 
 	userGrade, err := repository.GetGradeForDrinkAndUser(uint(userId), uint(drinkId))
 	if err != nil {
-		json.NewEncoder(writer).Encode(model.GradeCheckDTO{GradeExists: false, GradeValue: -1})
+		json.NewEncoder(writer).Encode(model.GradeCheckDTO{GradeExists: false, GradeValue: -1, GradeId: userGrade.Id})
 	} else {
-		json.NewEncoder(writer).Encode(model.GradeCheckDTO{GradeExists: true, GradeValue: int16(userGrade.Grade)})
+		json.NewEncoder(writer).Encode(model.GradeCheckDTO{GradeExists: true, GradeValue: int16(userGrade.Grade), GradeId: userGrade.Id})
 	}
 }
 
@@ -99,6 +99,10 @@ func CreateDrink(writer http.ResponseWriter, request *http.Request) {
 	} else {
 		writeBadRequest(writer, request, err)
 	}
+}
+
+func updateDrinkAverageGrade(drinkId uint) {
+	repository.UpdateDrinkAverageGrade(drinkId)
 }
 
 func GetSingleImage(writer http.ResponseWriter, request *http.Request) {
@@ -227,7 +231,9 @@ func CreateUserGrade(writer http.ResponseWriter, request *http.Request) {
 			UserId:  uint(userId)}
 
 		repository.CreateGrade(&userGrade)
+		updateDrinkAverageGrade(uint(drinkId))
 		writer.WriteHeader(http.StatusCreated)
+		json.NewEncoder(writer).Encode(userGrade)
 
 	} else {
 		message := "You cannot grade drink with id: " + strconv.FormatInt(int64(drinkId), 10) + " because you haven't purchased any."
@@ -246,16 +252,18 @@ func UpdateUserGrade(writer http.ResponseWriter, request *http.Request) {
 	userGrade, err := repository.FindUserGrade(uint(drinkId), uint(userGradeId), uint(userId))
 	if err != nil {
 		writeNotFound(writer, request, err)
-		return
+	} else {
+		var userGradeDTO model.UserGradeDTO
+		_ = json.NewDecoder(request.Body).Decode(&userGradeDTO)
+
+		userGrade.Grade = userGradeDTO.Grade
+		repository.UpdateUserGrade(&userGrade)
+		updateDrinkAverageGrade(uint(drinkId))
+
+		writer.WriteHeader(http.StatusOK)
+		json.NewEncoder(writer).Encode(userGrade)
+
 	}
-
-	var userGradeDTO model.UserGradeDTO
-	_ = json.NewDecoder(request.Body).Decode(&userGradeDTO)
-
-	userGrade.Grade = userGradeDTO.Grade
-	repository.UpdateUserGrade(&userGrade)
-
-	writer.WriteHeader(http.StatusNoContent)
 
 }
 
@@ -272,6 +280,7 @@ func DeleteUserGrade(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		writeInternalServerError(writer, request, err)
 	} else {
+		updateDrinkAverageGrade(uint(drinkId))
 		writer.WriteHeader(http.StatusNoContent)
 
 	}

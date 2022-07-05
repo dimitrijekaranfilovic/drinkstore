@@ -33,6 +33,22 @@ class DrinkService extends BaseService {
   updateDrink(drinkId, payload) {
     return this.put(`${this.basePath}/${drinkId}`, payload);
   }
+
+  addUserGrade(drinkId, payload) {
+    return this.post(`${this.basePath}/${drinkId}/grades`, payload);
+  }
+
+  updateUserGrade(drinkId, gradeId, payload) {
+    return this.put(`${this.basePath}/${drinkId}/grades/${gradeId}`, payload);
+  }
+
+  deleteUserGrade(drinkId, gradeId) {
+    return this.delete(`${this.basePath}/${drinkId}/grades/${gradeId}`);
+  }
+
+  checkUserGrade(drinkId) {
+    return this.get(`${this.basePath}/${drinkId}/grade-for-user`);
+  }
 }
 
 export const drinkService = new DrinkService();

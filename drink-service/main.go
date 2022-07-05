@@ -30,13 +30,13 @@ func main() {
 	//admin
 	router.HandleFunc("/api/drinks/{id}", requestHandler.DeleteDrink).Methods("DELETE") //povezano
 	//user
-	router.HandleFunc("/api/drinks/{id}/grades", requestHandler.CreateUserGrade).Methods("POST")
+	router.HandleFunc("/api/drinks/{id}/grades", requestHandler.CreateUserGrade).Methods("POST") //povezano
 	//user
-	router.HandleFunc("/api/drinks/{drinkId}/grades/{gradeId}", requestHandler.UpdateUserGrade).Methods("PUT")
+	router.HandleFunc("/api/drinks/{drinkId}/grades/{gradeId}", requestHandler.UpdateUserGrade).Methods("PUT") //povezano
 	//user
-	router.HandleFunc("/api/drinks/{drinkId}/grades/{gradeId}", requestHandler.DeleteUserGrade).Methods("DELETE")
+	router.HandleFunc("/api/drinks/{drinkId}/grades/{gradeId}", requestHandler.DeleteUserGrade).Methods("DELETE") //povezano
 	//user
-	router.HandleFunc("/api/drinks/{id}/grade-for-user", requestHandler.CheckDrinkGradeForUser).Methods("GET")
+	router.HandleFunc("/api/drinks/{id}/grade-for-user", requestHandler.CheckDrinkGradeForUser).Methods("GET") //povezano
 	//svi
 	router.HandleFunc("/api/drinks/images/{imageName}", requestHandler.GetSingleImage).Methods("GET") //povezano
 	corsHandler := cors.New(cors.Options{

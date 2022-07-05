@@ -90,3 +90,8 @@ func FindDrinkById(drinkId uint) (model.Drink, error) {
 func UpdateDrink(drink *model.Drink) {
 	database.Driver.Save(drink)
 }
+
+func UpdateDrinkAverageGrade(drinkId uint) {
+	subQuery := database.Driver.Select("avg(grade)").Where("drink_id = ?", drinkId).Table("user_grades")
+	database.Driver.Model(&model.Drink{}).Where("id = ?", drinkId).Update("average_grade", subQuery)
+}

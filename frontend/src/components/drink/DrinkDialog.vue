@@ -4,6 +4,7 @@
     v-model="dialog"
     hide-overlay
     transition="dialog-bottom-transition"
+    persistent
   >
     <v-card>
       <v-toolbar dark color="primary">
