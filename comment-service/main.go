@@ -42,6 +42,7 @@ func main() {
 	//admin
 	router.HandleFunc("/api/comments/reports", handler.GetAllReports).Methods("GET")
 	//admin
+	//TODO: stavi da ovo prima id komentara i id roditeljskog komentara
 	router.HandleFunc("/api/comments/{id}", handler.DeleteComment).Methods("DELETE")
 
 	corsHandler := cors.New(cors.Options{

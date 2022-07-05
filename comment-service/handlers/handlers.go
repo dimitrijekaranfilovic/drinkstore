@@ -53,11 +53,11 @@ func (mongoHandler *MongoHandler) CreateComment(writer http.ResponseWriter, requ
 		}
 	} else {
 		objectId, _ := primitive.ObjectIDFromHex(commentCreationDTO.ParentCommentId)
-		filter := bson.M{
-			"$or": []bson.M{{"_id": objectId}, {"id": objectId}}}
-		//options := options.FindOptions().SetProjection(bson.D{{"type", 1}, {"rating", 1}, {"_id", 0}})
-		findOneOptions := &options.FindOneOptions{}
-		findOneOptions.SetProjection(bson.D{
+		filterMain := bson.D{{"_id", objectId}}
+		//filter2 := bson.D{{"id", objectId}}
+		//TODO: vidi da li moze ovaj filter2 da gleda u dubinu
+		//TODO: ako ne moze, stavi da moze komentarisanje u 2 nivoa
+		project := bson.D{
 			{"id", 1},
 			{"_id", 1},
 			{"children", 1},
@@ -65,14 +65,22 @@ func (mongoHandler *MongoHandler) CreateComment(writer http.ResponseWriter, requ
 			{"content", 1},
 			{"userId", 1},
 			{"drinkId", 1},
-		})
-		//opts := options.FindOneOptions().SetProjection(bson.D{{"type", 1}, {"rating", 1}, {"_id", 0}})
-		result := mongoHandler.CommentCollection.FindOne(ctx, filter, findOneOptions)
+		}
+
+		opts := options.FindOne().SetProjection(project)
 		parentComment := model.CommentSavedDTO{}
-		result.Decode(parentComment)
-		fmt.Printf("parent comment id: %s\n", parentComment.Id.Hex())
-		fmt.Println("parent comment content: " + parentComment.Content)
-		fmt.Printf("parent comment children num: %d\n", len(parentComment.Children))
+
+		err := mongoHandler.CommentCollection.FindOne(ctx, filterMain, opts).Decode(&parentComment)
+		if err != nil {
+			//filterMain = filter2
+			//err = mongoHandler.CommentCollection.FindOne(ctx, filterMain, opts).Decode(&parentComment)
+			//if err != nil {
+			fmt.Println(err.Error())
+			writeInternalServerError(writer, request, err)
+			return
+			//}
+		}
+
 		newComment := model.ToCommentSavedDTOFromCommentCreationDTO(commentCreationDTO)
 		newCommentId := primitive.NewObjectID()
 		newComment.Id = newCommentId
@@ -80,7 +88,7 @@ func (mongoHandler *MongoHandler) CreateComment(writer http.ResponseWriter, requ
 		parentComment.Children = append(parentComment.Children, newComment)
 
 		update := bson.D{{"$set", bson.D{{"children", parentComment.Children}}}}
-		_, err3 := mongoHandler.CommentCollection.UpdateOne(ctx, filter, update)
+		_, err3 := mongoHandler.CommentCollection.UpdateOne(ctx, filterMain, update)
 		if err3 != nil {
 			writeInternalServerError(writer, request, err3)
 		} else {

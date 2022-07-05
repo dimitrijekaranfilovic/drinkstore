@@ -120,7 +120,7 @@ func generateJwt(user *model.User) (string, error) {
 	claims["sub"] = user.Username
 	claims["authority"] = authority.Name
 	claims["iat"] = timestamp.Unix()
-	claims["exp"] = timestamp.Add(time.Hour * 2).Unix()
+	claims["exp"] = timestamp.Add(time.Hour * 100).Unix()
 	claims["userId"] = user.Id
 	claims["iss"] = "ntp-user-service"
 
