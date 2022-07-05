@@ -26,7 +26,6 @@
       </v-btn>
     </div>
     <v-spacer />
-    <!--mozda ovo stavi u neki dropdown, koji ce imati tekst options ako nije ulogovan, a username ako jeste-->
 
     <v-menu offset-y v-model="menu">
       <template v-slot:activator="{ on, attrs }">
@@ -38,25 +37,37 @@
       </template>
       <v-list>
         <v-list-item-group>
-          <v-list-item @click="redirect({ name: 'Login' })">
+          <v-list-item
+            @click="redirect({ name: 'Login' })"
+            v-if="userAuthority === undefined"
+          >
             <v-icon color="primary"> mdi-clipboard-account-outline </v-icon>
             <v-list-item-content>
               <v-list-item-title>Login</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="redirect({ name: 'Register' })">
+          <v-list-item
+            @click="redirect({ name: 'Register' })"
+            v-if="userAuthority === undefined"
+          >
             <v-icon color="primary"> mdi-account-plus </v-icon>
             <v-list-item-content>
               <v-list-item-title>Register</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="redirect({ name: 'ReportedComments' })">
+          <v-list-item
+            @click="redirect({ name: 'ReportedComments' })"
+            v-if="userAuthority === 'ADMIN'"
+          >
             <v-icon color="primary">mdi-alert</v-icon>
             <v-list-item-content>
               <v-list-item-title> Reported comments </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="redirect({ name: 'Cart' })">
+          <v-list-item
+            @click="redirect({ name: 'Cart' })"
+            v-if="userAuthority === 'USER'"
+          >
             <v-icon color="primary">mdi-cart</v-icon>
             <v-list-item-content>
               <v-list-item-title>
@@ -69,8 +80,8 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-divider></v-divider>
-          <v-list-item>
+          <v-divider v-if="userAuthority !== undefined"></v-divider>
+          <v-list-item v-if="userAuthority !== undefined" @click="logout">
             <v-icon color="black"> mdi-logout </v-icon>
             <v-list-item-content>
               <v-list-item-title>Log out</v-list-item-title>
@@ -94,10 +105,17 @@ export default {
     redirect(routeObject) {
       this.$router.push(routeObject).catch(() => {});
     },
+    logout() {
+      this.$store.dispatch("logoutUser");
+    },
   },
   computed: {
     dropdownText() {
-      return "options";
+      if (!this.$store.state.isUserLoggedIn) return "options";
+      else return this.$store.state.user.username;
+    },
+    userAuthority() {
+      return this.$store.state.user.authority;
     },
   },
 };

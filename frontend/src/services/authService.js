@@ -9,6 +9,14 @@ class AuthService {
     return jwtDecode(localStorage.getItem("jwt"));
   }
 
+  setJwt(jwt) {
+    localStorage.setItem("jwt", jwt);
+  }
+
+  removeJwt() {
+    localStorage.removeItem("jwt");
+  }
+
   getJwtField(fieldName) {
     const jwt = this.decodeJwt();
     if (fieldName === "username") return jwt.sub;

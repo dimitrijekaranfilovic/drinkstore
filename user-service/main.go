@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"user-service/database"
-	"user-service/handlers"
+	requestHandler "user-service/handlers"
 
 	"github.com/gorilla/mux"
 )
@@ -18,16 +19,22 @@ func main() {
 	router := mux.NewRouter()
 
 	//svi
-	router.HandleFunc("/api/users/register", handlers.RegisterUser).Methods("POST")
+	router.HandleFunc("/api/users/register", requestHandler.RegisterUser).Methods("POST")
 	//svi
-	router.HandleFunc("/api/users/authenticate", handlers.Authenticate).Methods("POST")
+	router.HandleFunc("/api/users/authenticate", requestHandler.Authenticate).Methods("POST")
 	//admin
-	router.HandleFunc("/api/users/ban/{id}", handlers.BanUser).Methods("GET")
+	router.HandleFunc("/api/users/ban/{id}", requestHandler.BanUser).Methods("GET")
 	//samo ostali servisi
-	router.HandleFunc("/api/users/authorize", handlers.Authorize).Methods("GET")
+	router.HandleFunc("/api/users/authorize", requestHandler.Authorize).Methods("GET")
 	//samo ostali servisi
-	router.HandleFunc("/api/users/userId", handlers.GetUserIdFromJWT).Methods("GET")
+	router.HandleFunc("/api/users/userId", requestHandler.GetUserIdFromJWT).Methods("GET")
+
+	corsHandler := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:9090"},
+		AllowedMethods: []string{"OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE"},
+	})
+
 	fmt.Println("Listening on: " + port)
-	log.Fatalln(http.ListenAndServe(port, router))
+	log.Fatalln(http.ListenAndServe(port, corsHandler.Handler(router)))
 
 }

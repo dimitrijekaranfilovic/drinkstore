@@ -7,8 +7,25 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     cart: [],
+    isUserLoggedIn: false,
+    user: {
+      username: undefined,
+      authority: undefined,
+    },
   },
   mutations: {
+    LOGIN_USER(state, user) {
+      state.isUserLoggedIn = true;
+      state.user.username = user.username;
+      state.user.authority = user.authority;
+      localStorage.setItem("jwt", user.token);
+    },
+    LOGOUT_USER(state) {
+      state.isUserLoggedIn = false;
+      state.user.username = undefined;
+      state.user.authority = undefined;
+      localStorage.removeItem("jwt");
+    },
     ADD_TO_CART(state, cartItem) {
       state.cart.push(cartItem);
     },
@@ -27,6 +44,13 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    loginUser(store, user) {
+      store.commit("LOGIN_USER", user);
+    },
+    logoutUser(store) {
+      store.commit("LOGOUT_USER");
+    },
+
     cartItemExists(store, itemId) {
       return store.commit("ITEM_EXISTS", itemId);
     },
