@@ -37,13 +37,13 @@ func main() {
 	//user
 	router.HandleFunc("/api/comments", handler.CreateComment).Methods("POST") //povezano
 	//user
-	router.HandleFunc("/api/comments/reports", handler.ReportComment).Methods("POST")
+	router.HandleFunc("/api/comments/reports", handler.ReportComment).Methods("POST") //povezano
 	//svi
 	router.HandleFunc("/api/comments/for-drink/{drinkId}", handler.GetCommentsForDrink).Methods("GET") //povezano
 	//admin
-	router.HandleFunc("/api/comments/reports", handler.GetAllReports).Methods("GET")
+	router.HandleFunc("/api/comments/reports", handler.GetAllReports).Methods("GET") //povezano
 	//admin
-	router.HandleFunc("/api/comments/{id}", handler.DeleteComment).Methods("DELETE")
+	router.HandleFunc("/api/comments/{id}", handler.DeleteComment).Methods("DELETE") //povezano
 
 	corsHandler := cors.New(cors.Options{
 		AllowCredentials: true,
