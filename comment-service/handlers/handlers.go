@@ -52,9 +52,19 @@ func (mongoHandler *MongoHandler) CreateComment(writer http.ResponseWriter, requ
 	}
 
 }
-
-//user id iz tokena
-func (mongoHandler *MongoHandler) ReportComment(writer http.ResponseWriter, request *http.Request) {
+func (mongoHandler *MongoHandler) DeleteComment(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	ctx, cancel := context.WithTimeout(request.Context(), time.Second*20)
+	defer cancel()
+	params := mux.Vars(request)
+	commentId, _ := params["id"]
+	objectId, _ := primitive.ObjectIDFromHex(commentId)
+	_, err := mongoHandler.CommentCollection.DeleteOne(ctx, bson.M{"_id": objectId})
+	if err != nil {
+		writeInternalServerError(writer, request, err)
+	} else {
+		writer.WriteHeader(http.StatusNoContent)
+	}
 
 }
 
@@ -97,10 +107,12 @@ func (mongoHandler *MongoHandler) GetCommentsForDrink(writer http.ResponseWriter
 	}
 }
 
-func (mongoHandler *MongoHandler) GetAllReports(writer http.ResponseWriter, request *http.Request) {
+//user id iz tokena
+func (mongoHandler *MongoHandler) ReportComment(writer http.ResponseWriter, request *http.Request) {
 
 }
-func (mongoHandler *MongoHandler) DeleteComment(writer http.ResponseWriter, request *http.Request) {
+
+func (mongoHandler *MongoHandler) GetAllReports(writer http.ResponseWriter, request *http.Request) {
 
 }
 

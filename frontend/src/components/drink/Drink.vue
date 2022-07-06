@@ -132,25 +132,7 @@
     </v-row>
 
     <v-divider />
-    <v-card>
-      <v-card-title> Comments </v-card-title>
-      <v-card-text>
-        <v-container>
-          <v-row v-if="userAuthority === 'USER'">
-            <v-col cols="12" md="10">
-              <v-text-field label="Enter comment" />
-            </v-col>
-            <v-col cols="12" md="2">
-              <v-btn color="primary" class="send-btn">
-                <v-icon color="white"> mdi-send </v-icon>
-                Send
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-        <comments :comments="comments" v-if="comments.length > 0" />
-      </v-card-text>
-    </v-card>
+    <comment-section :comments="comments" @comment-added="addComment($event)" />
     <drink-dialog
       :dialog="drinkDialog"
       :drinkToEdit="drink"
@@ -181,17 +163,18 @@
 
 <script>
 import { categories } from "../../util/categories";
-import Comments from "../comments/Comments.vue";
 import DrinkDialog from "./DrinkDialog.vue";
 import { drinkService } from "../../services/drinkService";
 import ConfirmDialog from "../other/ConfirmDialog.vue";
 import Toast from "../other/Toast.vue";
 import GradingDialog from "../other/GradingDialog.vue";
+import CommentSection from "../comments/CommentSection.vue";
+import { commentService } from "../../services/commentService";
 
 export default {
   name: "Drink",
   components: {
-    Comments,
+    CommentSection,
     DrinkDialog,
     ConfirmDialog,
     Toast,
@@ -224,8 +207,23 @@ export default {
       if (this.userGrade.gradeValue === -1)
         this.userGrade.gradeValue = undefined;
     });
+    commentService
+      .getCommentsForDrink(this.$route.params.id)
+      .then((response) => {
+        this.comments = response.data;
+      });
   },
   methods: {
+    addComment(commentContent) {
+      const payload = {
+        content: commentContent,
+        user: this.$store.state.user.username,
+        drinkId: this.drink.id,
+      };
+      commentService.addComment(payload).then((response) => {
+        this.comments.push({ ...response.data });
+      });
+    },
     removeGrade() {
       drinkService
         .deleteUserGrade(this.$route.params.id, this.userGrade.gradeId)
@@ -309,19 +307,15 @@ export default {
       });
     },
     addToCart() {
-      let drinkId = this.drink.id;
-      let drinkName = this.drink.name;
-      let drinkPrice = this.drink.price;
       this.$store.dispatch("addCartItem", {
-        id: drinkId,
-        name: drinkName,
-        price: drinkPrice,
+        id: this.drink.id,
+        name: this.drink.name,
+        price: this.drink.price,
         amount: 1,
       });
     },
     removeFromCart() {
-      let drinkId = this.drink.id;
-      this.$store.dispatch("removeCartItem", drinkId);
+      this.$store.dispatch("removeCartItem", this.drink.id);
     },
   },
   computed: {

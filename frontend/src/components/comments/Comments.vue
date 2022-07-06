@@ -1,28 +1,16 @@
 <template>
-  <div class="tree">
-    <ul class="tree-list">
-      <comment
-        v-for="comment in comments"
-        :comment="comment"
-        :key="comment.id"
-      />
-    </ul>
-    <comment-reply-dialog
-      :dialog="commentReplyDialog"
-      @dialog-closing="commentReplyDialog = false"
-      @replied="reply($event)"
-    />
+  <v-container>
+    <comment v-for="comment in comments" :comment="comment" :key="comment.id" />
     <comment-report-dialog
       :dialog="commentReportDialog"
       @dialog-closing="commentReportDialog = false"
       @reported="report($event)"
     />
-  </div>
+  </v-container>
 </template>
 
 <script>
 import Comment from "./Comment.vue";
-import CommentReplyDialog from "./CommentReplyDialog.vue";
 import CommentReportDialog from "./CommentReportDialog.vue";
 import { eventBus } from "../../util/eventBus";
 
@@ -32,20 +20,14 @@ export default {
   data: () => {
     return {
       commentId: undefined,
-      commentReplyDialog: false,
       commentReportDialog: false,
     };
   },
   components: {
     Comment,
-    CommentReplyDialog,
     CommentReportDialog,
   },
   methods: {
-    reply(replyText) {
-      console.log(`reply to comment ${this.commentId} with ${replyText}`);
-      this.commentReplyDialog = false;
-    },
     report(reportReason) {
       console.log(`report comment ${this.commentId} for ${reportReason}`);
       this.commentReportDialog = false;
