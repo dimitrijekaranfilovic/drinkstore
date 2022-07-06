@@ -34,15 +34,14 @@ func main() {
 	router := mux.NewRouter()
 
 	//user
-	router.HandleFunc("/api/comments", handler.CreateComment).Methods("POST")
+	router.HandleFunc("/api/comments", handler.CreateComment).Methods("POST") //povezano
 	//user
 	router.HandleFunc("/api/comments/{id}/reports", handler.ReportComment).Methods("POST")
 	//svi
-	router.HandleFunc("/api/comments/for-drink/{drinkId}", handler.GetCommentsForDrink).Methods("GET")
+	router.HandleFunc("/api/comments/for-drink/{drinkId}", handler.GetCommentsForDrink).Methods("GET") //povezano
 	//admin
 	router.HandleFunc("/api/comments/reports", handler.GetAllReports).Methods("GET")
 	//admin
-	//TODO: stavi da ovo prima id komentara i id roditeljskog komentara
 	router.HandleFunc("/api/comments/{id}", handler.DeleteComment).Methods("DELETE")
 
 	corsHandler := cors.New(cors.Options{

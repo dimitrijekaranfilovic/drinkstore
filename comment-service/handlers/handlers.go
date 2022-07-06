@@ -4,10 +4,13 @@ import (
 	"comment-service/model"
 	"context"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -34,16 +37,18 @@ func (mongoHandler *MongoHandler) CreateComment(writer http.ResponseWriter, requ
 
 	userId := getUserId(request)
 
+	now := time.Now()
 	res, err := mongoHandler.CommentCollection.InsertOne(ctx, bson.D{
 		{"user", dto.User},
 		{"userId", userId},
 		{"content", dto.Content},
 		{"drinkId", dto.DrinkId},
+		{"postedAt", now},
 	})
 	if err != nil {
 		writeInternalServerError(writer, request, err)
 	} else {
-		json.NewEncoder(writer).Encode(model.ToCommentDTOFromCommentCreationDTO(&dto, getDocumentId(res)))
+		json.NewEncoder(writer).Encode(model.ToCommentDTOFromCommentCreationDTO(&dto, getDocumentId(res), now))
 	}
 
 }
@@ -54,7 +59,42 @@ func (mongoHandler *MongoHandler) ReportComment(writer http.ResponseWriter, requ
 }
 
 func (mongoHandler *MongoHandler) GetCommentsForDrink(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	ctx, cancel := context.WithTimeout(request.Context(), time.Second*20)
+	defer cancel()
+	params := mux.Vars(request)
+	drinkId, _ := strconv.ParseUint(params["drinkId"], 10, 64)
+	opts := options.Find().SetSort(bson.D{{"postedAt", 1}})
+	cursor, err := mongoHandler.CommentCollection.Find(ctx, bson.D{{"drinkId", drinkId}}, opts)
+	if err != nil {
+		writeInternalServerError(writer, request, err)
+	} else {
+		var comments []model.CommentDTO
+		for {
+			if cursor.TryNext(ctx) {
+				var comment model.CommentSaved
+				cursor.Decode(&comment)
+				newComment := model.CommentDTO{
+					Id:       comment.Id.Hex(),
+					User:     comment.User,
+					Content:  comment.Content,
+					DrinkId:  comment.DrinkId,
+					PostedAt: comment.PostedAt,
+				}
+				comments = append(comments, newComment)
+				continue
+			}
+			if cursor.ID() == 0 {
+				break
+			}
+		}
+		if comments == nil {
+			json.NewEncoder(writer).Encode([]model.CommentDTO{})
+		} else {
+			json.NewEncoder(writer).Encode(comments)
 
+		}
+	}
 }
 
 func (mongoHandler *MongoHandler) GetAllReports(writer http.ResponseWriter, request *http.Request) {
