@@ -15,7 +15,10 @@
               <tr>
                 <th class="text-left">Comment content</th>
                 <th class="text-left">Reported for</th>
-                <th class="text-left">User</th>
+                <th class="text-left">Posted by</th>
+                <th class="text-left">Reported by</th>
+                <th class="text-left">Reported at</th>
+
                 <th class="text-left">Drink</th>
                 <!--id pica na kojem je ostavljen komentar-->
                 <th class="text-left">Delete report</th>
@@ -24,12 +27,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="comment in comments" :key="comment.id">
-                <td>{{ comment.content }}</td>
+              <tr v-for="comment in reports" :key="comment.id">
+                <td>{{ comment.commentContent }}</td>
                 <td>
                   {{ comment.reportReason | removeUnderscore | capitalize }}
                 </td>
-                <td>{{ comment.user }}</td>
+                <td>{{ comment.postedBy }}</td>
+                <td>{{ comment.reportedBy }}</td>
+                <td>{{ comment.reportedAt | formatDate }}</td>
+
                 <td>
                   <router-link
                     :to="{ name: 'Drink', params: { id: comment.drinkId } }"
@@ -55,20 +61,18 @@
 </template>
 
 <script>
+import { commentService } from "../../services/commentService";
 export default {
   name: "ReportedComments",
   data: () => {
     return {
-      comments: [
-        {
-          id: 1,
-          content: "MAKSE KRALJU",
-          user: "user 1",
-          drinkId: 2,
-          reportReason: "THREATENING_VIOLENCE",
-        },
-      ],
+      reports: [],
     };
+  },
+  mounted() {
+    commentService.getReports().then((response) => {
+      this.reports = response.data;
+    });
   },
 };
 </script>

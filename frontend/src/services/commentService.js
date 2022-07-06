@@ -13,6 +13,14 @@ class CommentService extends BaseService {
   addComment(payload) {
     return this.post(`${this.basePath}`, payload);
   }
+
+  addReport(payload) {
+    return this.post(`${this.basePath}/reports`, payload);
+  }
+
+  getReports() {
+    return this.get(`${this.basePath}/reports`);
+  }
 }
 
 export const commentService = new CommentService();

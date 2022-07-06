@@ -11,6 +11,37 @@ type CommentCreationDTO struct {
 	DrinkId uint   `json:"drinkId"`
 }
 
+type ReportCreationDTO struct {
+	CommentContent string `json:"commentContent"`
+	CommentId      string `json:"commentId"`
+	PostedBy       string `json:"postedBy"`
+	DrinkId        uint   `json:"drinkId,string"`
+	ReportReason   string `json:"reportReason"`
+	ReportedBy     string `json:"reportedBy"`
+}
+
+type ReportDTO struct {
+	Id             string    `json:"id"`
+	CommentContent string    `json:"commentContent"`
+	CommentId      string    `json:"commentId"`
+	PostedBy       string    `json:"postedBy"`
+	DrinkId        uint      `json:"drinkId,string"`
+	ReportReason   string    `json:"reportReason"`
+	ReportedBy     string    `json:"reportedBy"`
+	ReportedAt     time.Time `json:"reportedAt"`
+}
+
+type ReportSavedDTO struct {
+	Id             primitive.ObjectID `json:"_id" bson:"_id"`
+	CommentContent string             `json:"commentContent"`
+	CommentId      string             `json:"commentId"`
+	PostedBy       string             `json:"postedBy"`
+	DrinkId        uint               `json:"drinkId,string"`
+	ReportReason   string             `json:"reportReason"`
+	ReportedBy     string             `json:"reportedBy"`
+	ReportedAt     time.Time          `json:"reportedAt"`
+}
+
 type CommentDTO struct {
 	Id       string    `json:"id"`
 	User     string    `json:"user"`
@@ -46,5 +77,18 @@ func ToCommentDTOFromCommentCreationDTO(dto *CommentCreationDTO, id string, time
 		Content:  dto.Content,
 		DrinkId:  dto.DrinkId,
 		PostedAt: time,
+	}
+}
+
+func ToReportDTOFromReportCreationDTO(dto *ReportCreationDTO, id string, time time.Time) ReportDTO {
+	return ReportDTO{
+		Id:             id,
+		CommentContent: dto.CommentContent,
+		CommentId:      dto.CommentId,
+		PostedBy:       dto.PostedBy,
+		DrinkId:        dto.DrinkId,
+		ReportReason:   dto.ReportReason,
+		ReportedBy:     dto.ReportedBy,
+		ReportedAt:     time,
 	}
 }

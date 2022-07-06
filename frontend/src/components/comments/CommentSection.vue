@@ -15,7 +15,11 @@
           </v-col>
         </v-row>
       </v-container>
-      <comments :comments="comments" v-if="comments.length > 0" />
+      <comments
+        :comments="comments"
+        v-if="comments.length > 0"
+        :drinkId="drinkId"
+      />
     </v-card-text>
   </v-card>
 </template>
@@ -23,7 +27,7 @@
 <script>
 import Comments from "./Comments.vue";
 export default {
-  props: ["comments"],
+  props: ["comments", "drinkId"],
   components: { Comments },
   name: "CommentSection",
   data: () => {

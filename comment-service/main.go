@@ -28,6 +28,7 @@ func main() {
 
 	handler := handlers.MongoHandler{
 		CommentCollection: client.Database("ntp-comment-service").Collection("comments"),
+		ReportCollection:  client.Database("ntp-comment-service").Collection("reports"),
 	}
 
 	port := "127.0.0.1:8083"
@@ -36,7 +37,7 @@ func main() {
 	//user
 	router.HandleFunc("/api/comments", handler.CreateComment).Methods("POST") //povezano
 	//user
-	router.HandleFunc("/api/comments/{id}/reports", handler.ReportComment).Methods("POST")
+	router.HandleFunc("/api/comments/reports", handler.ReportComment).Methods("POST")
 	//svi
 	router.HandleFunc("/api/comments/for-drink/{drinkId}", handler.GetCommentsForDrink).Methods("GET") //povezano
 	//admin

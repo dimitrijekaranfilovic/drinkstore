@@ -132,7 +132,11 @@
     </v-row>
 
     <v-divider />
-    <comment-section :comments="comments" @comment-added="addComment($event)" />
+    <comment-section
+      :comments="comments"
+      @comment-added="addComment($event)"
+      :drinkId="$route.params.id"
+    />
     <drink-dialog
       :dialog="drinkDialog"
       :drinkToEdit="drink"
