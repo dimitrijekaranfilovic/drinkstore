@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 	"user-service/database"
@@ -64,19 +63,19 @@ func Authorize(writer http.ResponseWriter, request *http.Request) {
 	if err != nil || !token.Valid {
 		fmt.Println(err.Error())
 		writer.WriteHeader(http.StatusForbidden)
-		json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
+		//json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
 		return
 	}
 
 	if token.Claims.(*model.JwtClaims).Authority != authority {
 		fmt.Println("Nije dobar autoritet")
 		writer.WriteHeader(http.StatusForbidden)
-		json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
+		//json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
 		return
 	}
 	fmt.Println("Sve ok")
 	writer.WriteHeader(http.StatusOK)
-	json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: true})
+	//json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: true})
 	return
 }
 
@@ -139,11 +138,11 @@ func generateJwt(user *model.User) (string, error) {
 func BanUser(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(request)
-	userId, _ := strconv.ParseUint(params["id"], 10, 64)
+	username, _ := params["username"]
 
-	user, err := repository.FindUserById(uint(userId))
+	user, err := repository.FindUserByUsername(username)
 	if err != nil {
-		writeNotFound(writer, request, err)
+		writeBadRequest(writer, request, errors.New("User has already been banned or does not exist."))
 	} else {
 		if user.AuthorityId == 1 {
 			writer.WriteHeader(http.StatusForbidden)

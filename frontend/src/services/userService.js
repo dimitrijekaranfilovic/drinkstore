@@ -12,6 +12,10 @@ class UserService extends BaseService {
   register(payload) {
     return this.post(`${this.basePath}/register`, payload);
   }
+
+  banUser(username) {
+    return this.get(`${this.basePath}/ban/${username}`);
+  }
 }
 
 export const userService = new UserService();

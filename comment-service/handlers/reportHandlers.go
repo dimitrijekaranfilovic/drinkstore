@@ -5,7 +5,9 @@ import (
 	"comment-service/util"
 	"context"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"time"
@@ -75,5 +77,20 @@ func (mongoHandler *MongoHandler) GetAllReports(writer http.ResponseWriter, requ
 
 		}
 
+	}
+}
+
+func (mongoHandler *MongoHandler) DeleteReport(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	ctx, cancel := context.WithTimeout(request.Context(), time.Second*20)
+	defer cancel()
+	params := mux.Vars(request)
+	reportId, _ := params["id"]
+	objectId, _ := primitive.ObjectIDFromHex(reportId)
+	_, err := mongoHandler.ReportCollection.DeleteOne(ctx, bson.M{"_id": objectId})
+	if err != nil {
+		writeInternalServerError(writer, request, err)
+	} else {
+		writer.WriteHeader(http.StatusNoContent)
 	}
 }

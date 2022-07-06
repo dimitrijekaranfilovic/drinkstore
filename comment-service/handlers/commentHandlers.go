@@ -47,11 +47,19 @@ func (mongoHandler *MongoHandler) DeleteComment(writer http.ResponseWriter, requ
 	params := mux.Vars(request)
 	commentId, _ := params["id"]
 	objectId, _ := primitive.ObjectIDFromHex(commentId)
-	_, err := mongoHandler.CommentCollection.DeleteOne(ctx, bson.M{"_id": objectId})
-	if err != nil {
-		writeInternalServerError(writer, request, err)
+	_, err1 := mongoHandler.CommentCollection.DeleteOne(ctx, bson.M{"_id": objectId})
+	if err1 != nil {
+		writeInternalServerError(writer, request, err1)
 	} else {
-		writer.WriteHeader(http.StatusNoContent)
+		_, err2 := mongoHandler.ReportCollection.DeleteMany(ctx, bson.M{"commentId": commentId})
+		if err2 != nil {
+			writeInternalServerError(writer, request, err2)
+
+		} else {
+			writer.WriteHeader(http.StatusNoContent)
+
+		}
+
 	}
 
 }

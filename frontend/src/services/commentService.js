@@ -21,6 +21,14 @@ class CommentService extends BaseService {
   getReports() {
     return this.get(`${this.basePath}/reports`);
   }
+
+  deleteComment(commentId) {
+    return this.delete(`${this.basePath}/${commentId}`);
+  }
+
+  deleteReport(reportId) {
+    return this.delete(`${this.basePath}/reports/${reportId}`);
+  }
 }
 
 export const commentService = new CommentService();

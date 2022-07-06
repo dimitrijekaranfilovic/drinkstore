@@ -23,7 +23,7 @@ func main() {
 	//svi
 	router.HandleFunc("/api/users/authenticate", requestHandler.Authenticate).Methods("POST") //povezano
 	//admin
-	router.HandleFunc("/api/users/ban/{id}", requestHandler.BanUser).Methods("GET")
+	router.HandleFunc("/api/users/ban/{username}", requestHandler.BanUser).Methods("GET")
 	//samo ostali servisi
 	router.HandleFunc("/api/users/authorize", requestHandler.Authorize).Methods("GET")
 	//samo ostali servisi
