@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve  --port 9090",
+    "serve-proxy": "vue-cli-service serve  --port 9090 --mode proxy",
+    "serve-no-proxy": "vue-cli-service serve --port 9090 --mode no-proxy",
     "build": "vue-cli-service build"
   },
   "dependencies": {

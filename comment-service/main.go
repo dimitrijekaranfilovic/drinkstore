@@ -44,6 +44,8 @@ func main() {
 	router.HandleFunc("/api/comments/reports", handler.GetAllReports).Methods("GET") //povezano
 	//admin
 	router.HandleFunc("/api/comments/{id}", handler.DeleteComment).Methods("DELETE") //povezano
+	//admin
+	router.HandleFunc("/api/comments/reports/{id}", handler.DeleteReport).Methods("DELETE")
 
 	corsHandler := cors.New(cors.Options{
 		AllowCredentials: true,
