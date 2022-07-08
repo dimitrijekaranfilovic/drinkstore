@@ -34,6 +34,7 @@ func main() {
 	port := "127.0.0.1:8083"
 	router := mux.NewRouter()
 
+	//TODO: razdvoj kreiranje i dobavljanje reportova u 2 putanje zbog nginx autorizacije
 	//user
 	router.HandleFunc("/api/comments", handler.CreateComment).Methods("POST") //povezano
 	//user

@@ -53,30 +53,45 @@ func extractJWT(request *http.Request) (*jwt.Token, error) {
 	return token, err
 }
 
-func Authorize(writer http.ResponseWriter, request *http.Request) {
+
+func AuthorizeAdmin(writer http.ResponseWriter, request *http.Request){
 	writer.Header().Set("Content-Type", "application/json")
-	queryParams := request.URL.Query()
-	authority := queryParams.Get("authority")
 
 	token, err := extractJWT(request)
 
 	if err != nil || !token.Valid {
 		fmt.Println(err.Error())
 		writer.WriteHeader(http.StatusForbidden)
-		//json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
 		return
 	}
 
-	if token.Claims.(*model.JwtClaims).Authority != authority {
+	if token.Claims.(*model.JwtClaims).Authority != "ADMIN" {
 		fmt.Println("Nije dobar autoritet")
 		writer.WriteHeader(http.StatusForbidden)
-		//json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: false})
 		return
 	}
 	fmt.Println("Sve ok")
 	writer.WriteHeader(http.StatusOK)
-	//json.NewEncoder(writer).Encode(model.AuthorizationResponse{Allowed: true})
-	return
+}
+
+func AuthorizeUser(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+
+	token, err := extractJWT(request)
+
+	if err != nil || !token.Valid {
+		fmt.Println(err.Error())
+		writer.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	if token.Claims.(*model.JwtClaims).Authority != "USER" {
+		fmt.Println("Nije dobar autoritet")
+		writer.WriteHeader(http.StatusForbidden)
+		return
+	}
+	fmt.Println("Sve ok")
+	writer.WriteHeader(http.StatusOK)
 }
 
 func Authenticate(writer http.ResponseWriter, request *http.Request) {

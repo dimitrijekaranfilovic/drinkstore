@@ -16,7 +16,8 @@ func main() {
 	port := "127.0.0.1:8082"
 
 	router := mux.NewRouter()
-
+	//TODO: razdvoj kreiranje i dobavljanje pica u 2 putanje, zbog nginx autorizacije
+	//TODO: razdvoj dobavljanje u jednu i azuriranje i brisanje pica u 2 putanje, isti razlog
 	//svi
 	router.HandleFunc("/api/drinks", requestHandler.GetDrinks).Methods("GET") //povezano
 	//svi

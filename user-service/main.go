@@ -25,7 +25,9 @@ func main() {
 	//admin
 	router.HandleFunc("/api/users/ban/{username}", requestHandler.BanUser).Methods("GET")
 	//samo ostali servisi
-	router.HandleFunc("/api/users/authorize", requestHandler.Authorize).Methods("GET")
+	router.HandleFunc("/api/users/authorize-admin", requestHandler.AuthorizeAdmin).Methods("GET")
+	//samo ostali servisi
+	router.HandleFunc("/api/users/authorize-user", requestHandler.AuthorizeUser).Methods("GET")
 	//samo ostali servisi
 	router.HandleFunc("/api/users/userId", requestHandler.GetUserIdFromJWT).Methods("GET")
 
