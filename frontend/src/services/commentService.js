@@ -15,11 +15,11 @@ class CommentService extends BaseService {
   }
 
   addReport(payload) {
-    return this.post(`${this.basePath}/reports`, payload);
+    return this.post(`${this.basePath}/reports/create`, payload);
   }
 
   getReports() {
-    return this.get(`${this.basePath}/reports`);
+    return this.get(`${this.basePath}/reports/get`);
   }
 
   deleteComment(commentId) {

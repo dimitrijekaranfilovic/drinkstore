@@ -34,15 +34,14 @@ func main() {
 	port := "127.0.0.1:8083"
 	router := mux.NewRouter()
 
-	//TODO: razdvoj kreiranje i dobavljanje reportova u 2 putanje zbog nginx autorizacije
 	//user
 	router.HandleFunc("/api/comments", handler.CreateComment).Methods("POST") //povezano
 	//user
-	router.HandleFunc("/api/comments/reports", handler.ReportComment).Methods("POST") //povezano
+	router.HandleFunc("/api/comments/reports/create", handler.ReportComment).Methods("POST") //povezano
 	//svi
 	router.HandleFunc("/api/comments/for-drink/{drinkId}", handler.GetCommentsForDrink).Methods("GET") //povezano
 	//admin
-	router.HandleFunc("/api/comments/reports", handler.GetAllReports).Methods("GET") //povezano
+	router.HandleFunc("/api/comments/reports/get", handler.GetAllReports).Methods("GET") //povezano
 	//admin
 	router.HandleFunc("/api/comments/{id}", handler.DeleteComment).Methods("DELETE") //povezano
 	//admin

@@ -7,15 +7,15 @@ class DrinkService extends BaseService {
   }
 
   getDrinks(params) {
-    return this.getWithParams(`${this.basePath}`, params);
+    return this.getWithParams(`${this.basePath}/get`, params);
   }
 
   getSingleDrink(drinkId) {
-    return this.get(`${this.basePath}/${drinkId}`);
+    return this.get(`${this.basePath}/get/${drinkId}`);
   }
 
   createDrink(payload) {
-    return this.post(`${this.basePath}`, payload);
+    return this.post(`${this.basePath}/create`, payload);
   }
 
   createDrinkImage(drinkId, imageFile) {
