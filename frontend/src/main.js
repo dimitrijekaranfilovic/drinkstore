@@ -14,6 +14,20 @@ import store from "./store";
 Vue.use(VueToast);
 Vue.config.productionTip = false;
 
+router.beforeEach((to, _, next) => {
+  const { authenticated, authorities } = to.meta;
+  if (authenticated) {
+    let userAuthority = store.state.user.authority;
+    if (authorities.some((element) => element === userAuthority)) {
+      next();
+    } else {
+      next({ name: "Login" });
+    }
+  } else {
+    next();
+  }
+});
+
 new Vue({
   router,
   vuetify,
