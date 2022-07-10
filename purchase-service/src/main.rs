@@ -38,6 +38,13 @@ fn create_purchase(purchase_creation_dto: rocket::serde::json::Json<tools::Purch
 }
 
 
+#[get("/most-sold?<period>")]
+fn get_most_sold(period: String) -> content::RawJson<String> {
+ std::thread::spawn(move || {
+        content::RawJson(tools::get_most_sold_drinks(period).unwrap())
+    }).join().unwrap()
+}
+
 
 
 
@@ -46,6 +53,6 @@ fn rocket() -> _ {
     std::thread::spawn(|| {
         tools::create_database().unwrap();
     }).join().expect("Thread panicked.");
-    rocket::build().mount("/api/purchases", routes![user_can_comment_and_grade, create_purchase, user_history])
+    rocket::build().mount("/api/purchases", routes![user_can_comment_and_grade, create_purchase, user_history, get_most_sold])
 }
 

@@ -49,6 +49,10 @@ class DrinkService extends BaseService {
   checkUserGrade(drinkId) {
     return this.get(`${this.basePath}/${drinkId}/grade-for-user`);
   }
+
+  getUnfilteredDrinks() {
+    return this.get(`${this.basePath}/get-unfiltered`);
+  }
 }
 
 export const drinkService = new DrinkService();

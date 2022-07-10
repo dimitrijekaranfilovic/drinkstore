@@ -24,15 +24,13 @@
         <drink-card :drink="drink" :key="drink.id" :index="drinkIndex" />
       </v-col>
     </v-row>
-    <div class="text-center">
-      <!--TODO:  ovo vidi da se malo ispravi, za sad je samo placeholder -->
-      <v-pagination v-model="page" :length="6"></v-pagination>
-    </div>
   </v-container>
 </template>
 
 <script>
 import DrinkCard from "../drink/DrinkCard.vue";
+
+import { drinkService } from "../../services/drinkService";
 
 export default {
   components: { DrinkCard },
@@ -43,42 +41,21 @@ export default {
       chip: 0,
       numRows: 1,
       numCols: 5,
-      drinks: [
-        {
-          id: 1,
-          name: "Vinjak",
-          description: "Opis",
-          volume: 0.75,
-          volumeLabel: "l",
-          averageGrade: 4.8,
-          category: "LIQUOR",
-          numberOfSales: 100,
-          price: 3000,
-        },
-        {
-          id: 2,
-          name: "Vranac",
-          description: "Opis",
-          volume: 0.75,
-          volumeLabel: "l",
-          averageGrade: 4.8,
-          category: "WINE",
-          numberOfSales: 99,
-          price: 3000,
-        },
-        {
-          id: 3,
-          name: "Zajecarsko",
-          description: "Opis",
-          volume: 0.75,
-          volumeLabel: "l",
-          averageGrade: 4.8,
-          category: "BEER",
-          numberOfSales: 98,
-          price: 3000,
-        },
-      ],
+      drinks: [],
     };
+  },
+  mounted() {
+    drinkService.getUnfilteredDrinks().then((response) => {
+      this.drinks = response.data;
+    });
+  },
+  watch: {
+    chip(newChip) {
+      if (newChip == 0) console.log("day");
+      else if (newChip == 1) console.log("week");
+      else if (newChip == 2) console.log("month");
+      else if (newChip == 3) console.log("year");
+    },
   },
 };
 </script>

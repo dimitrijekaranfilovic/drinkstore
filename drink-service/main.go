@@ -19,6 +19,8 @@ func main() {
 	//svi
 	router.HandleFunc("/api/drinks/get", requestHandler.GetDrinks).Methods("GET") //povezano
 	//svi
+	router.HandleFunc("/api/drinks/get-unfiltered", requestHandler.GetUnfilteredDrinks).Methods("GET")
+	//svi
 	router.HandleFunc("/api/drinks/get/{id}", requestHandler.GetSingleDrink).Methods("GET") //povezano
 	//admin
 	router.HandleFunc("/api/drinks/create", requestHandler.CreateDrink).Methods("POST") //povezano

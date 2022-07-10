@@ -9,6 +9,12 @@ import (
 	"strings"
 )
 
+func GetAllDrinks() []model.Drink {
+	var drinks []model.Drink
+	database.Driver.Find(&drinks)
+	return drinks
+}
+
 func GetDrinks(categories []string, volumeLabels []string, query string, gradeFrom float64, gradeTo float64, page uint64, size uint64, sortCriteria string, sortDirection string) ([]model.Drink, int64) {
 	var drinks, totalDrinks []model.Drink
 	var totalItems int64
