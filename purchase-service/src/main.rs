@@ -14,7 +14,12 @@ use rocket::response::{content};
 // use std::{thread};
 
 
-//#[get("/history-for-user/<user_id>")]
+#[get("/history-for-user/<user_id>")]
+fn user_history(user_id: i32) -> content::RawJson<String> {
+    std::thread::spawn(move || {
+        content::RawJson(tools::get_user_purchase_history(user_id).unwrap())
+    }).join().unwrap()
+}
 
 
 //ostali servisi
@@ -34,11 +39,13 @@ fn create_purchase(purchase_creation_dto: rocket::serde::json::Json<tools::Purch
 
 
 
+
+
 #[launch]
 fn rocket() -> _ {
     std::thread::spawn(|| {
         tools::create_database().unwrap();
     }).join().expect("Thread panicked.");
-    rocket::build().mount("/api/purchases", routes![user_can_comment_and_grade, create_purchase])
+    rocket::build().mount("/api/purchases", routes![user_can_comment_and_grade, create_purchase, user_history])
 }
 

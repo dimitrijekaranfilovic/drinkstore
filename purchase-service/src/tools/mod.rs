@@ -1,5 +1,7 @@
 
 
+use std::collections::HashMap;
+
 use postgres::{Client, NoTls, Error};
 use serde::{Serialize, Deserialize};
 use chrono::prelude::{DateTime, Utc};
@@ -18,6 +20,25 @@ pub struct PurchaseItemCreationDTO {
   drink_id: i32,
   num_items: i32,
   unit_price: i32,
+}
+
+
+#[derive(Serialize, Deserialize)]
+pub struct PurchaseDTO {
+  id: i32,
+  user_id: i32,
+  purchase_items: Vec<PurchaseItemDTO>
+}
+
+
+#[derive(Serialize, Deserialize)]
+pub struct PurchaseItemDTO {
+  id: i32,
+  name: String,
+  drink_id: i32,
+  num_items: i32,
+  unit_price: i32,
+  purchase_datetime: String
 }
 
 #[derive(Serialize)]
@@ -103,4 +124,29 @@ pub fn create_purchase(purchase: rocket::serde::json::Json<PurchaseCreationDTO>)
 
 
   Ok(serde_json::to_string(&StatusMessage{message: "Purchase created successfully!".to_string()}).unwrap())
+}
+
+pub fn get_user_purchase_history(user_id: i32) -> Result<String, Error> {
+    let mut db_client = Client::connect("postgresql://postgres:root@localhost:5432/ntp-purchase-service", NoTls)?; 
+    let mut purchase_history: Vec<PurchaseDTO> = Vec::new();
+    for purchase_row in db_client.query("SELECT id from purchases WHERE user_id = $1", &[&user_id])? {
+        let purchase_id: i32 = purchase_row.get(0);
+        let mut purchase: PurchaseDTO = PurchaseDTO { id:purchase_id, user_id: user_id, purchase_items: Vec::new() };
+        for item_row in db_client.query("SELECT * FROM purchase_items WHERE user_id = $1 AND purchase_id = $2", &[&user_id, &purchase_id])? {
+          let item_id: i32 = item_row.get(0);
+          let item_name: String = item_row.get(1);
+          let item_drink_id: i32 = item_row.get(2);
+          let item_num_items: i32 = item_row.get(3);
+          let item_unit_price: i32 = item_row.get(4);
+          let item_purchase_date_time: String = item_row.get(6);
+
+          let purchase_item: PurchaseItemDTO = PurchaseItemDTO { id:item_id, name: item_name, drink_id: item_drink_id, num_items: item_num_items, unit_price: item_unit_price, purchase_datetime: item_purchase_date_time };
+          purchase.purchase_items.push(purchase_item);
+        }
+        purchase_history.push(purchase);
+    }
+
+    Ok(serde_json::to_string(&purchase_history).unwrap())
+
+
 }
