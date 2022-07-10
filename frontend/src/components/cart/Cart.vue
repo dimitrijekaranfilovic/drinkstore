@@ -48,23 +48,70 @@
 
     <v-row align="center" justify="center" v-if="$store.state.cart.length > 0">
       <v-col cols="12">
-        <v-btn color="primary"> Confirm order </v-btn>
+        <v-btn
+          :loading="confirmBtnLoading"
+          @click="createPurchase()"
+          color="primary"
+        >
+          Confirm order
+        </v-btn>
       </v-col>
     </v-row>
+    <toast
+      :snackbar="snackbar"
+      :text="text"
+      @toast-closing="snackbar = false"
+    />
   </v-container>
 </template>
 
 <script>
+import { purchaseService } from "../../services/purchaseService";
+import { authService } from "../../services/authService";
+
+import Toast from "../other/Toast.vue";
+
 export default {
   name: "Cart",
+  components: { Toast },
   data: () => {
     return {
-      //items: [],
+      snackbar: false,
+      text: "",
+      confirmBtnLoading: false,
     };
   },
   methods: {
     removeFromCart(itemId) {
       this.$store.dispatch("removeCartItem", itemId);
+    },
+    createPurchase() {
+      this.confirmBtnLoading = true;
+      const userId = authService.getJwtField("userId");
+      let purchasePayload = { user_id: userId, purchase_items: [] };
+      for (const item of this.$store.state.cart) {
+        let newItem = {};
+        newItem.name = item.name;
+        newItem.drink_id = item.id;
+        newItem.num_items = item.amount;
+        newItem.unit_price = item.price;
+
+        purchasePayload.purchase_items.push(newItem);
+      }
+      purchaseService
+        .createPurchase(purchasePayload)
+        .then((_) => {
+          this.confirmBtnLoading = false;
+          this.text = "Purchase created successfully.";
+          this.snackbar = true;
+          this.$store.dispatch("emptyCart");
+        })
+        .catch((_) => {
+          this.confirmBtnLoading = false;
+          this.text = "An error occurred while creating purchase.";
+          this.snackbar = true;
+        });
+      //console.log(purchasePayload);
     },
     updateAmount() {},
   },

@@ -14,6 +14,9 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    EMPTY_CART(state) {
+      state.cart = [];
+    },
     LOGIN_USER(state, user) {
       state.isUserLoggedIn = true;
       state.user.username = user.username;
@@ -44,6 +47,9 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    emptyCart(store) {
+      store.commit("EMPTY_CART");
+    },
     loginUser(store, user) {
       store.commit("LOGIN_USER", user);
     },
