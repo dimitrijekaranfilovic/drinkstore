@@ -24,6 +24,10 @@ type UserGradeDTO struct {
 	Grade uint8 `json:"grade"`
 }
 
+type UserCanGradeCheck struct {
+	NumPurchases int64	`json:"num_purchases, string"`
+}
+
 //TODO: stavi u neki common
 type UserIdDTO struct {
 	UserId int `json:"userId"`

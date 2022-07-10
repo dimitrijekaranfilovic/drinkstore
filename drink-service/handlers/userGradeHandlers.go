@@ -31,7 +31,7 @@ func CreateUserGrade(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	//TODO: ovdje pozovi purchase service
-	hasOrdered := true
+	hasOrdered := util.UserCanGrade(request, drinkId);
 	if hasOrdered {
 		var userGradeDTO model.UserGradeDTO
 		_ = json.NewDecoder(request.Body).Decode(&userGradeDTO)

@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"errors"
 )
 
 func (mongoHandler *MongoHandler) CreateComment(writer http.ResponseWriter, request *http.Request) {
@@ -20,23 +21,32 @@ func (mongoHandler *MongoHandler) CreateComment(writer http.ResponseWriter, requ
 	defer cancel()
 	//TODO: pozovi purchase service
 	var dto model.CommentCreationDTO
-	_ = json.NewDecoder(request.Body).Decode(&dto)
+		_ = json.NewDecoder(request.Body).Decode(&dto)
 
-	userId := util.GetUserId(request)
 
-	now := time.Now()
-	res, err := mongoHandler.CommentCollection.InsertOne(ctx, bson.D{
-		{"user", dto.User},
-		{"userId", userId},
-		{"content", dto.Content},
-		{"drinkId", dto.DrinkId},
-		{"postedAt", now},
-	})
-	if err != nil {
-		writeInternalServerError(writer, request, err)
+	hasOrdered := util.UserCanComment(request,uint64(dto.DrinkId));
+	if hasOrdered {
+		
+	
+		userId := util.GetUserId(request)
+	
+		now := time.Now()
+		res, err := mongoHandler.CommentCollection.InsertOne(ctx, bson.D{
+			{"user", dto.User},
+			{"userId", userId},
+			{"content", dto.Content},
+			{"drinkId", dto.DrinkId},
+			{"postedAt", now},
+		})
+		if err != nil {
+			writeInternalServerError(writer, request, err)
+		} else {
+			json.NewEncoder(writer).Encode(model.ToCommentDTOFromCommentCreationDTO(&dto, util.GetDocumentId(res), now))
+		}
 	} else {
-		json.NewEncoder(writer).Encode(model.ToCommentDTOFromCommentCreationDTO(&dto, util.GetDocumentId(res), now))
+		writeBadRequest(writer, request, errors.New("You cannot comment on this drink because you haven't purchased any."));
 	}
+	
 
 }
 

@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+type UserCanGradeCheck struct {
+	NumPurchases int64	`json:"num_purchases, string"`
+}
+
 type CommentCreationDTO struct {
 	User    string `json:"user"`
 	Content string `json:"content"`

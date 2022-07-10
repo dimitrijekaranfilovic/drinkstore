@@ -224,9 +224,16 @@ export default {
         user: this.$store.state.user.username,
         drinkId: this.drink.id,
       };
-      commentService.addComment(payload).then((response) => {
-        this.comments.push({ ...response.data });
-      });
+      commentService
+        .addComment(payload)
+        .then((response) => {
+          this.comments.push({ ...response.data });
+        })
+        .catch((error) => {
+          if (error.response) this.text = error.response.data.message;
+          else this.text = "An error occured while commenting.";
+          this.snackbar = true;
+        });
     },
     removeGrade() {
       drinkService
@@ -244,6 +251,11 @@ export default {
           this.userGrade.gradeExists = true;
           this.userGrade.gradeValue = grade;
           this.userGrade.gradeId = response.data.id;
+        })
+        .catch((error) => {
+          if (error.response) this.text = error.response.data.message;
+          else this.text = "An error occured while grading drink.";
+          this.snackbar = true;
         });
     },
     updateGrade(grade) {
