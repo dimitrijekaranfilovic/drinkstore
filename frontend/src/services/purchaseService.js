@@ -13,6 +13,10 @@ class PurchaseService extends BaseService {
   getUserHistory(userId) {
     return this.get(`${this.basePath}/history-for-user/${userId}`);
   }
+
+  getMostSold(period) {
+    return this.get(`${this.basePath}/most-sold?period=${period}`);
+  }
 }
 
 export const purchaseService = new PurchaseService();

@@ -31,6 +31,7 @@
 import DrinkCard from "../drink/DrinkCard.vue";
 
 import { drinkService } from "../../services/drinkService";
+import { purchaseService } from "../../services/purchaseService";
 
 export default {
   components: { DrinkCard },
@@ -38,23 +39,47 @@ export default {
   data: () => {
     return {
       page: 1,
-      chip: 0,
+      chip: 3,
       numRows: 1,
       numCols: 5,
       drinks: [],
+      period: "year",
     };
   },
   mounted() {
-    drinkService.getUnfilteredDrinks().then((response) => {
-      this.drinks = response.data;
-    });
+    this.search(this.period);
+  },
+  methods: {
+    search(period) {
+      drinkService.getUnfilteredDrinks().then((response) => {
+        let ds = response.data;
+        //this.drinks = response.data;
+        for (const drink of ds) {
+          drink.numberOfSales = 0;
+        }
+        purchaseService.getMostSold(period).then((response) => {
+          const mostSold = response.data;
+          for (const item of mostSold) {
+            const drinkId = item.drink_id;
+            const sold = item.sold_items;
+            ds.find((drink) => drink.id === drinkId)["numberOfSales"] = sold;
+          }
+
+          //console.log(this.drinks);
+          ds.sort((d1, d2) => d1.numberOfSales > d2.numberOfSales);
+          this.drinks = [...ds];
+        });
+      });
+    },
   },
   watch: {
     chip(newChip) {
-      if (newChip == 0) console.log("day");
-      else if (newChip == 1) console.log("week");
-      else if (newChip == 2) console.log("month");
-      else if (newChip == 3) console.log("year");
+      if (newChip == 0) this.period = "day";
+      else if (newChip == 1) this.period = "week";
+      else if (newChip == 2) this.period = "month";
+      else if (newChip == 3) this.period = "year";
+
+      this.search(this.period);
     },
   },
 };
