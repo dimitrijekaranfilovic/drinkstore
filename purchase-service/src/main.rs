@@ -1,8 +1,8 @@
 //TODO: 
 //1.istorija kupovine, 
 //2.najprodavaniji artikli, 
-//3.mogucnost komentarisanja i ocjenjivanja 
-//4.sama kupovina
+//3.mogucnost komentarisanja i ocjenjivanja => DODATO
+//4.sama kupovina => DODATO
 
 #[macro_use] extern crate rocket;
 mod tools;
@@ -18,10 +18,17 @@ use rocket::response::{content};
 
 
 //ostali servisi
-#[get("/user-comment-and-grade?<user_id>&<drink_id>")] //treba drink_id i user_id
+#[get("/user-comment-and-grade?<user_id>&<drink_id>")]
 fn user_can_comment_and_grade(user_id: i32, drink_id: i32) -> content::RawJson<String> {
     std::thread::spawn(move || {
         content::RawJson(tools::get_user_purchase_count_for_drink(user_id, drink_id).unwrap())
+    }).join().unwrap()
+}
+
+#[post("/", format="json", data="<purchase_creation_dto>")]
+fn create_purchase(purchase_creation_dto: rocket::serde::json::Json<tools::PurchaseCreationDTO>) -> content::RawJson<String> {
+    std::thread::spawn(move || {
+        content::RawJson(tools::create_purchase(purchase_creation_dto).unwrap())
     }).join().unwrap()
 }
 
@@ -30,8 +37,8 @@ fn user_can_comment_and_grade(user_id: i32, drink_id: i32) -> content::RawJson<S
 #[launch]
 fn rocket() -> _ {
     std::thread::spawn(|| {
-        tools::create_database();
+        tools::create_database().unwrap();
     }).join().expect("Thread panicked.");
-    rocket::build().mount("/api/purchases", routes![user_can_comment_and_grade])
+    rocket::build().mount("/api/purchases", routes![user_can_comment_and_grade, create_purchase])
 }
 
