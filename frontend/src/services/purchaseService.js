@@ -9,6 +9,10 @@ class PurchaseService extends BaseService {
   createPurchase(payload) {
     return this.post(`${this.basePath}`, payload);
   }
+
+  getUserHistory(userId) {
+    return this.get(`${this.basePath}/history-for-user/${userId}`);
+  }
 }
 
 export const purchaseService = new PurchaseService();

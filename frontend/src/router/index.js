@@ -69,6 +69,15 @@ const routes = [
       authorities: [roles.admin],
     },
   },
+  {
+    path: "/purchase-history",
+    name: "PurchaseHistory",
+    component: () => import("../views/PurchaseHistoryView.vue"),
+    meta: {
+      authenticated: true,
+      authorities: [roles.user],
+    },
+  },
 ];
 const router = new VueRouter({
   routes,

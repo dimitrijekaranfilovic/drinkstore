@@ -80,6 +80,15 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item
+            v-if="userAuthority === 'USER'"
+            @click="redirect({ name: 'PurchaseHistory' })"
+          >
+            <v-icon color="primary">mdi-clipboard-text-clock</v-icon>
+            <v-list-item-content>
+              <v-list-item-title> Purchase history </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-divider v-if="userAuthority !== undefined"></v-divider>
           <v-list-item v-if="userAuthority !== undefined" @click="logout">
             <v-icon color="black"> mdi-logout </v-icon>
