@@ -1,10 +1,10 @@
 #[macro_use] extern crate rocket;
 mod tools;
 mod traits;
+mod responders;
 
-use rocket::request::Request;
-use rocket::response::{self, Response, content, status};
-use rocket::response::Responder;
+use rocket::response::{content, status};
+
 
 
 use rocket::http::Status;
@@ -25,45 +25,35 @@ fn catch_internal_server_error() -> content::RawJson<String> {
 
 
 
-struct OptionsResponder;
 
-impl<'r> Responder<'r, 'static> for OptionsResponder {
-    fn respond_to(self, _: &'r Request<'_>) -> response::Result<'static> {
-        Ok(Response::build()
-        .status(Status::NoContent)
-        .raw_header("Access-Control-Allow-Origin", "http://localhost:9090")
-        .raw_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD")
-        .raw_header("Access-Control-Allow-Headers", "*")
-        .raw_header("Access-Control-Allow-Credentials", "true")
-        .finalize())
-    }
-}
 
 //OPTIONS METHOD HANDLERS
 #[options("/history-for-user/<_>")]
-fn options_user_history() -> OptionsResponder{
-    let response = OptionsResponder;
+fn options_user_history() -> responders::OptionsResponder{
+    let response = responders::OptionsResponder;
     response
 }
 
 #[options("/user-comment-and-grade/<_..>")]
-fn options_user_can_comment_and_grade() -> OptionsResponder{
-    let response = OptionsResponder;
+fn options_user_can_comment_and_grade() -> responders::OptionsResponder{
+    let response = responders::OptionsResponder;
     response
 }
 
 
 #[options("/")]
-fn options_create_purchase() -> OptionsResponder {
-    let response = OptionsResponder;
+fn options_create_purchase() -> responders::OptionsResponder {
+    let response = responders::OptionsResponder;
     response
 }
 
 #[options("/most-sold/<_..>")]
-fn options_get_most_sold()-> OptionsResponder {
-    let response = OptionsResponder;
+fn options_get_most_sold()-> responders::OptionsResponder {
+    let response = responders::OptionsResponder;
     response
 }
+
+
 
 
 
@@ -72,36 +62,55 @@ fn options_get_most_sold()-> OptionsResponder {
 
 //user
 #[get("/history-for-user/<user_id>")]
-fn user_history(user_id: i32) -> content::RawJson<String> {
+fn user_history(user_id: i32) -> responders::OptionsResponderWithContentStatus200 {
     std::thread::spawn(move || {
-        content::RawJson(tools::get_user_purchase_history(user_id).unwrap())
+        responders::add_content_to_options_responder_status200(tools::get_user_purchase_history(user_id).unwrap())
     }).join().unwrap()
 }
+// #[get("/history-for-user/<user_id>")]
+// fn user_history(user_id: i32) -> content::RawJson<String> {
+//     std::thread::spawn(move || {
+//         content::RawJson(tools::get_user_purchase_history(user_id).unwrap())
+//     }).join().unwrap()
+// }
 
 
 //comment i drink servisi
 #[get("/user-comment-and-grade?<user_id>&<drink_id>")]
-fn user_can_comment_and_grade(user_id: i32, drink_id: i32) -> content::RawJson<String> {
+fn user_can_comment_and_grade(user_id: i32, drink_id: i32) -> responders::OptionsResponderWithContentStatus200 {
     std::thread::spawn(move || {
-        content::RawJson(tools::get_user_purchase_count_for_drink(user_id, drink_id).unwrap())
+        responders::add_content_to_options_responder_status200(tools::get_user_purchase_count_for_drink(user_id, drink_id).unwrap())
     }).join().unwrap()
 }
+// #[get("/user-comment-and-grade?<user_id>&<drink_id>")]
+// fn user_can_comment_and_grade(user_id: i32, drink_id: i32) -> content::RawJson<String> {
+//     std::thread::spawn(move || {
+//         content::RawJson(tools::get_user_purchase_count_for_drink(user_id, drink_id).unwrap())
+//     }).join().unwrap()
+// }
 
 
 //user
 #[post("/", format="json", data="<purchase_creation_dto>")]
-fn create_purchase(purchase_creation_dto: rocket::serde::json::Json<tools::PurchaseCreationDTO>) -> status::Custom<content::RawJson<String>> {
+fn create_purchase(purchase_creation_dto: rocket::serde::json::Json<tools::PurchaseCreationDTO>) -> responders::OptionsResponderWithContentStatus201 {
     std::thread::spawn(move || {
-        status::Custom(Status::Created, content::RawJson(tools::create_purchase(purchase_creation_dto).unwrap()))
+        responders::add_content_to_options_responder_status201(tools::create_purchase(purchase_creation_dto).unwrap())
 
     }).join().unwrap()
 }
+// #[post("/", format="json", data="<purchase_creation_dto>")]
+// fn create_purchase(purchase_creation_dto: rocket::serde::json::Json<tools::PurchaseCreationDTO>) -> status::Custom<content::RawJson<String>> {
+//     std::thread::spawn(move || {
+//         status::Custom(Status::Created, content::RawJson(tools::create_purchase(purchase_creation_dto).unwrap()))
+
+//     }).join().unwrap()
+// }
 
 //svi
 #[get("/most-sold?<period>")]
-fn get_most_sold(period: String) -> content::RawJson<String> {
+fn get_most_sold(period: String) -> responders::OptionsResponderWithContentStatus200 {
  std::thread::spawn(move || {
-        content::RawJson(tools::get_most_sold_drinks(period).unwrap())
+    responders::add_content_to_options_responder_status200(tools::get_most_sold_drinks(period).unwrap())
     }).join().unwrap()
 }
 
