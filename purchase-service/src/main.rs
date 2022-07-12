@@ -3,14 +3,7 @@ mod tools;
 mod traits;
 mod responders;
 
-use rocket::response::{content, status};
-
-
-
-use rocket::http::Status;
-// use rocket::fairing::{Fairing, Info, Kind};
-// use rocket::http::Header;
-
+use rocket::response::content;
 
 //ERROR CATCHERS
 #[catch(404)]
@@ -22,8 +15,6 @@ fn catch_not_found() -> content::RawJson<String> {
 fn catch_internal_server_error() -> content::RawJson<String> {
     content::RawJson(serde_json::to_string(&tools::StatusMessage{message: "Internal server error.".to_string(), status_code: 500}).unwrap())
 }
-
-
 
 
 
@@ -67,12 +58,6 @@ fn user_history(user_id: i32) -> responders::OptionsResponderWithContentStatus20
         responders::add_content_to_options_responder_status200(tools::get_user_purchase_history(user_id).unwrap())
     }).join().unwrap()
 }
-// #[get("/history-for-user/<user_id>")]
-// fn user_history(user_id: i32) -> content::RawJson<String> {
-//     std::thread::spawn(move || {
-//         content::RawJson(tools::get_user_purchase_history(user_id).unwrap())
-//     }).join().unwrap()
-// }
 
 
 //comment i drink servisi
@@ -82,13 +67,6 @@ fn user_can_comment_and_grade(user_id: i32, drink_id: i32) -> responders::Option
         responders::add_content_to_options_responder_status200(tools::get_user_purchase_count_for_drink(user_id, drink_id).unwrap())
     }).join().unwrap()
 }
-// #[get("/user-comment-and-grade?<user_id>&<drink_id>")]
-// fn user_can_comment_and_grade(user_id: i32, drink_id: i32) -> content::RawJson<String> {
-//     std::thread::spawn(move || {
-//         content::RawJson(tools::get_user_purchase_count_for_drink(user_id, drink_id).unwrap())
-//     }).join().unwrap()
-// }
-
 
 //user
 #[post("/", format="json", data="<purchase_creation_dto>")]
@@ -98,13 +76,7 @@ fn create_purchase(purchase_creation_dto: rocket::serde::json::Json<tools::Purch
 
     }).join().unwrap()
 }
-// #[post("/", format="json", data="<purchase_creation_dto>")]
-// fn create_purchase(purchase_creation_dto: rocket::serde::json::Json<tools::PurchaseCreationDTO>) -> status::Custom<content::RawJson<String>> {
-//     std::thread::spawn(move || {
-//         status::Custom(Status::Created, content::RawJson(tools::create_purchase(purchase_creation_dto).unwrap()))
 
-//     }).join().unwrap()
-// }
 
 //svi
 #[get("/most-sold?<period>")]
@@ -119,7 +91,6 @@ fn get_most_sold(period: String) -> responders::OptionsResponderWithContentStatu
 
 #[launch]
 fn rocket() -> _ {
-    // let cors = CORS{};
     std::thread::spawn(|| {
         tools::create_database().unwrap();
     }).join().expect("Thread panicked.");
@@ -127,6 +98,5 @@ fn rocket() -> _ {
     .mount("/api/purchases", routes![user_can_comment_and_grade, create_purchase, user_history, get_most_sold])
     .mount("/api/purchases", routes![options_user_can_comment_and_grade, options_create_purchase, options_user_history, options_get_most_sold])
     .register("/api/purchases", catchers![catch_not_found, catch_internal_server_error])
-    // .attach(cors)
 }
 
