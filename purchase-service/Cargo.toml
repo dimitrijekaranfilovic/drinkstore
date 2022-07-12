@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 postgres = "0.19.3"
-#rocket = { version = "0.5.0-rc.2", features = ["secrets", "tls", "json"] }
 rocket = { version = "0.5.0-rc.2", features = ["json"] }
 serde = "1.0.138"
 serde_derive = "1.0.138"

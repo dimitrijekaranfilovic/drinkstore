@@ -5,9 +5,20 @@
 use postgres::{Client, NoTls, Error};
 use serde::{Serialize, Deserialize};
 use chrono::prelude::{DateTime, Utc};
-
+//use rocket::http::{Header, ContentType};
 
 //Model
+
+//options method responder
+// #[derive(Responder)]
+// #[response(status = 204)]
+// pub struct OptionsMethodResponder {
+//   pub access_control_allow_methods: Header<'static>,
+//   pub access_control_allow_origins: Header<'static>
+// }
+
+
+
 #[derive(Serialize, Deserialize)]
 pub struct PurchaseCreationDTO {
   purchase_items: Vec<PurchaseItemCreationDTO>,
@@ -43,7 +54,8 @@ pub struct PurchaseItemDTO {
 
 #[derive(Serialize)]
 pub struct StatusMessage {
-  message: String,
+  pub message: String,
+  pub status_code: i32
 }
 
 #[derive(Serialize, Deserialize)]
@@ -58,6 +70,9 @@ pub struct DrinkSoldCount {
   drink_id: i32,
   sold_items: i64,
 }
+
+
+
 
 
 
@@ -132,7 +147,7 @@ pub fn create_purchase(purchase: rocket::serde::json::Json<PurchaseCreationDTO>)
     }
 
 
-  Ok(serde_json::to_string(&StatusMessage{message: "Purchase created successfully!".to_string()}).unwrap())
+  Ok(serde_json::to_string(&StatusMessage{message: "Purchase created successfully!".to_string(), status_code: 201}).unwrap())
 }
 
 pub fn get_user_purchase_history(user_id: i32) -> Result<String, Error> {
