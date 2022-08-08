@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"user-service/database"
@@ -31,14 +30,8 @@ func main() {
 	//samo ostali servisi
 	router.HandleFunc("/api/users/userId", requestHandler.GetUserIdFromJWT).Methods("GET")
 
-	corsHandler := cors.New(cors.Options{
-		AllowCredentials: true,
-		AllowedOrigins:   []string{"http://localhost:9090"},
-		AllowedMethods:   []string{"OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders:   []string{"*"},
-	})
 
 	fmt.Println("Listening on: " + port)
-	log.Fatalln(http.ListenAndServe(port, corsHandler.Handler(router)))
+	log.Fatalln(http.ListenAndServe(port, router))
 
 }

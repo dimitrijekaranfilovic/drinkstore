@@ -96,7 +96,6 @@
 
 <script>
 import { categories } from "../../util/categories";
-// import { mapActions } from "vuex";
 export default {
   name: "DrinkCard",
   props: ["drink", "index"],

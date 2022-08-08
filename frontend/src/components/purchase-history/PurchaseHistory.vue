@@ -27,7 +27,7 @@
                 <td>
                   <router-link
                     :to="{ name: 'Drink', params: { id: item.drink_id } }"
-                    >View drink</router-link
+                    >{{ item.name }}</router-link
                   >
                 </td>
                 <td>
@@ -67,7 +67,6 @@ export default {
     let userId = authService.getJwtField("userId");
     purchaseService.getUserHistory(userId).then((response) => {
       this.purchases = response.data;
-      console.log(this.purchases);
     });
   },
 };

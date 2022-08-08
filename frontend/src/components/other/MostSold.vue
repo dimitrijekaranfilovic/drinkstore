@@ -53,7 +53,6 @@ export default {
     search(period) {
       drinkService.getUnfilteredDrinks().then((response) => {
         let ds = response.data;
-        //this.drinks = response.data;
         for (const drink of ds) {
           drink.numberOfSales = 0;
         }
@@ -65,7 +64,6 @@ export default {
             ds.find((drink) => drink.id === drinkId)["numberOfSales"] = sold;
           }
 
-          //console.log(this.drinks);
           ds.sort((d1, d2) => d1.numberOfSales > d2.numberOfSales);
           this.drinks = [...ds];
         });

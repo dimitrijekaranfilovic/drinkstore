@@ -4,10 +4,10 @@ import (
 	"drink-service/database"
 	requestHandler "drink-service/handlers"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -40,14 +40,8 @@ func main() {
 	router.HandleFunc("/api/drinks/{id}/grade-for-user", requestHandler.CheckDrinkGradeForUser).Methods("GET") //povezano
 	//svi
 	router.HandleFunc("/api/drinks/images/{imageName}", requestHandler.GetSingleImage).Methods("GET") //povezano
-	corsHandler := cors.New(cors.Options{
-		AllowCredentials: true,
-		AllowedOrigins:   []string{"http://localhost:9090"},
-		AllowedMethods:   []string{"OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders:   []string{"*"},
-	})
 
 	fmt.Println("Listening on: " + port)
-	log.Fatalln(http.ListenAndServe(port, corsHandler.Handler(router)))
+	log.Fatalln(http.ListenAndServe(port, router))
 
 }

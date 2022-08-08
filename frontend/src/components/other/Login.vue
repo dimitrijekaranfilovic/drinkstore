@@ -106,7 +106,6 @@ export default {
           else this.text = "An error occurred while logging in.";
           this.snackbar = true;
         });
-      //console.log("LOGIN");
     },
   },
 };

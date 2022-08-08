@@ -51,7 +51,6 @@ export default {
         reportReason: reportReason,
         reportedBy: this.$store.state.user.username,
       };
-      //console.log(reportPayload);
 
       this.commentReportDialog = false;
       commentService

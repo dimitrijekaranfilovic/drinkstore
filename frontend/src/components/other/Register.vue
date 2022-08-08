@@ -289,7 +289,6 @@ export default {
           else this.text = "An error occurred while registering user.";
           this.snackbar = true;
         });
-      //console.log(this.payload);
     },
   },
 };

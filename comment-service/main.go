@@ -4,12 +4,12 @@ import (
 	"comment-service/handlers"
 	"context"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/rs/cors"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
@@ -47,13 +47,6 @@ func main() {
 	//admin
 	router.HandleFunc("/api/comments/reports/{id}", handler.DeleteReport).Methods("DELETE")
 
-	corsHandler := cors.New(cors.Options{
-		AllowCredentials: true,
-		AllowedOrigins:   []string{"http://localhost:9090"},
-		AllowedMethods:   []string{"OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders:   []string{"*"},
-	})
-
 	fmt.Println("Listening on: " + port)
-	log.Fatalln(http.ListenAndServe(port, corsHandler.Handler(router)))
+	log.Fatalln(http.ListenAndServe(port, router))
 }

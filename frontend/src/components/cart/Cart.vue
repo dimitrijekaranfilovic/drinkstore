@@ -111,12 +111,8 @@ export default {
           this.text = "An error occurred while creating purchase.";
           this.snackbar = true;
         });
-      //console.log(purchasePayload);
     },
     updateAmount() {},
   },
-  // mounted() {
-  //   this.items = this.$store.state.cart;
-  // },
 };
 </script>

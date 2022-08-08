@@ -116,7 +116,7 @@ export default {
     },
     logout() {
       this.$store.dispatch("logoutUser");
-      this.$router.push({ name: "Home" });
+      this.$router.push({ name: "Home" }).catch(() => {});
     },
   },
   computed: {
