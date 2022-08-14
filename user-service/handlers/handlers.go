@@ -3,18 +3,19 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"github.com/golang-jwt/jwt"
-	"github.com/gorilla/mux"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strings"
 	"time"
 	"user-service/database"
 	"user-service/model"
 	"user-service/repository"
+
+	"github.com/golang-jwt/jwt"
+	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 )
 
+//TODO: env variable
 var signingKey = []byte("signing_key")
 
 func RegisterUser(writer http.ResponseWriter, request *http.Request) {
@@ -55,44 +56,32 @@ func extractJWT(request *http.Request) (*jwt.Token, error) {
 
 
 func AuthorizeAdmin(writer http.ResponseWriter, request *http.Request){
-	writer.Header().Set("Content-Type", "application/json")
-
-	token, err := extractJWT(request)
-
-	if err != nil || !token.Valid {
-		fmt.Println(err.Error())
-		writer.WriteHeader(http.StatusForbidden)
-		return
-	}
-
-	if token.Claims.(*model.JwtClaims).Authority != "ADMIN" {
-		fmt.Println("Nije dobar autoritet")
-		writer.WriteHeader(http.StatusForbidden)
-		return
-	}
-	fmt.Println("Sve ok")
-	writer.WriteHeader(http.StatusOK)
+	authorize(writer, request, "ADMIN")
+	
 }
 
 func AuthorizeUser(writer http.ResponseWriter, request *http.Request) {
+	authorize(writer, request, "USER")
+}
+
+func authorize(writer http.ResponseWriter, request *http.Request, role string) {
 	writer.Header().Set("Content-Type", "application/json")
 
 	token, err := extractJWT(request)
 
 	if err != nil || !token.Valid {
-		fmt.Println(err.Error())
+		//fmt.Println(err.Error())
 		writer.WriteHeader(http.StatusForbidden)
 		return
 	}
 
-	if token.Claims.(*model.JwtClaims).Authority != "USER" {
-		fmt.Println("Nije dobar autoritet")
+	if token.Claims.(*model.JwtClaims).Authority != role {
 		writer.WriteHeader(http.StatusForbidden)
 		return
 	}
-	fmt.Println("Sve ok")
 	writer.WriteHeader(http.StatusOK)
 }
+
 
 func Authenticate(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
@@ -153,7 +142,7 @@ func generateJwt(user *model.User) (string, error) {
 func BanUser(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(request)
-	username, _ := params["username"]
+	username := params["username"]
 
 	user, err := repository.FindUserByUsername(username)
 	if err != nil {
@@ -179,7 +168,7 @@ func GetUserIdFromJWT(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	token, err := extractJWT(request)
 	if err != nil || !token.Valid {
-		fmt.Println(err.Error())
+		//fmt.Println(err.Error())
 		writer.WriteHeader(http.StatusForbidden)
 		json.NewEncoder(writer).Encode(model.UserIdDTO{UserId: -1})
 	} else {

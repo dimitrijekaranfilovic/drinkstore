@@ -2,12 +2,9 @@ package model
 
 import (
 	"github.com/golang-jwt/jwt"
-	"time"
 )
 
-type ApiError interface {
-	ApiError() (string, time.Time, string, int, string)
-}
+
 
 type Authority struct {
 	Id   uint   `json:"id" gorm:"primaryKey"`
