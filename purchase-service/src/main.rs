@@ -1,6 +1,5 @@
 #[macro_use] extern crate rocket;
 mod tools;
-mod traits;
 
 use rocket::response::{content, status};
 use rocket::http::Status;

@@ -5,20 +5,8 @@
 use postgres::{Client, NoTls, Error};
 use serde::{Serialize, Deserialize};
 use chrono::prelude::{DateTime, Utc};
-//use rocket::http::{Header, ContentType};
 
 //Model
-
-//options method responder
-// #[derive(Responder)]
-// #[response(status = 204)]
-// pub struct OptionsMethodResponder {
-//   pub access_control_allow_methods: Header<'static>,
-//   pub access_control_allow_origins: Header<'static>
-// }
-
-
-
 #[derive(Serialize, Deserialize)]
 pub struct PurchaseCreationDTO {
   purchase_items: Vec<PurchaseItemCreationDTO>,
@@ -80,7 +68,6 @@ pub struct DrinkSoldCount {
 
 //Functions
 pub fn create_database() -> Result<(), Error> {
-    //TODO: dodaj test podatke
 
     let mut db_client = Client::connect("postgresql://postgres:root@localhost:5432/ntp-purchase-service", NoTls)?; 
     
@@ -179,8 +166,6 @@ pub fn get_user_purchase_history(user_id: i32) -> Result<String, Error> {
 pub fn get_most_sold_drinks(period: String) -> Result<String, Error> {
 
   let mut to_sub: u64 = 0;
-  //TODO: uracunaj i ovaj period 
-  //let mut time
   if period == "day" {
     to_sub = 86400;
   } 
@@ -197,13 +182,11 @@ pub fn get_most_sold_drinks(period: String) -> Result<String, Error> {
 
 
   let mut time_to_check = std::time::SystemTime::now();
-  //let mut time_past_option = time_now.checked_sub(std::time::Duration::new(to_sub,0)).;
   match time_to_check.checked_sub(std::time::Duration::new(to_sub, 0)) {
     Some(value) => time_to_check = value,
     None => println!("ERROR")
   }
 
-  //time_now = time_now.
   let formatter: DateTime<Utc> = time_to_check.clone().into();
   let iso_format_date = formatter.format("%+").to_string(); 
 
@@ -211,16 +194,15 @@ pub fn get_most_sold_drinks(period: String) -> Result<String, Error> {
   
   
   
-  //select drink_id, sum(num_items) as total_sold from purchase_items group by drink_id order by total_sold desc;
-    let mut db_client = Client::connect("postgresql://postgres:root@localhost:5432/ntp-purchase-service", NoTls)?; 
-    let mut most_sold: Vec<DrinkSoldCount> = Vec::new();
-    for row in db_client.query("SELECT drink_id, SUM(num_items) as total_sold from purchase_items WHERE purchase_datetime >= $1 GROUP BY drink_id ORDER BY total_sold DESC", &[&iso_format_date])? {
-      let drink_id: i32 = row.get(0);
-      let total_sold: i64 = row.get(1);
+  let mut db_client = Client::connect("postgresql://postgres:root@localhost:5432/ntp-purchase-service", NoTls)?; 
+  let mut most_sold: Vec<DrinkSoldCount> = Vec::new();
+  for row in db_client.query("SELECT drink_id, SUM(num_items) as total_sold from purchase_items WHERE purchase_datetime >= $1 GROUP BY drink_id ORDER BY total_sold DESC", &[&iso_format_date])? {
+    let drink_id: i32 = row.get(0);
+    let total_sold: i64 = row.get(1);
 
-      let drink_sold: DrinkSoldCount = DrinkSoldCount { drink_id: drink_id, sold_items: total_sold };
-      most_sold.push(drink_sold);
-    }
-    Ok(serde_json::to_string(&most_sold).unwrap())
+    let drink_sold: DrinkSoldCount = DrinkSoldCount { drink_id: drink_id, sold_items: total_sold };
+    most_sold.push(drink_sold);
+  }
+  Ok(serde_json::to_string(&most_sold).unwrap())
 
 }

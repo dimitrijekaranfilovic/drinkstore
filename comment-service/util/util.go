@@ -3,10 +3,11 @@ package util
 import (
 	"comment-service/model"
 	"encoding/json"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"strconv"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func GetDocumentId(result *mongo.InsertOneResult) string {
