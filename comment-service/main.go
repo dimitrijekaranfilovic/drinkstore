@@ -35,15 +35,15 @@ func main() {
 	router := mux.NewRouter()
 
 	//user
-	router.HandleFunc("/api/comments", handler.CreateComment).Methods("POST") //povezano
+	router.HandleFunc("/api/comments", handler.CreateComment).Methods("POST") 
 	//user
-	router.HandleFunc("/api/comments/reports/create", handler.ReportComment).Methods("POST") //povezano
+	router.HandleFunc("/api/comments/reports/create", handler.ReportComment).Methods("POST") 
 	//svi
-	router.HandleFunc("/api/comments/for-drink/{drinkId}", handler.GetCommentsForDrink).Methods("GET") //povezano
+	router.HandleFunc("/api/comments/for-drink/{drinkId}", handler.GetCommentsForDrink).Methods("GET") 
 	//admin
-	router.HandleFunc("/api/comments/reports/get", handler.GetAllReports).Methods("GET") //povezano
+	router.HandleFunc("/api/comments/reports/get", handler.GetAllReports).Methods("GET") 
 	//admin
-	router.HandleFunc("/api/comments/{id}", handler.DeleteComment).Methods("DELETE") //povezano
+	router.HandleFunc("/api/comments/{id}", handler.DeleteComment).Methods("DELETE") 
 	//admin
 	router.HandleFunc("/api/comments/reports/{id}", handler.DeleteReport).Methods("DELETE")
 

@@ -1,6 +1,5 @@
 package model
 
-//TODO: dodati kolicinu?
 type Drink struct {
 	Id           uint    `json:"id" gorm:"primaryKey"`
 	Name         string  `json:"name" gorm:"unique"`

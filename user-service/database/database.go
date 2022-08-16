@@ -2,11 +2,12 @@ package database
 
 import (
 	"fmt"
+	"log"
+	"user-service/model"
+
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
-	"user-service/model"
 )
 
 var Driver *gorm.DB

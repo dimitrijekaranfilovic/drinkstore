@@ -7,9 +7,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func CreateUserGrade(writer http.ResponseWriter, request *http.Request) {
@@ -30,7 +31,6 @@ func CreateUserGrade(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	//TODO: ovdje pozovi purchase service
 	hasOrdered := util.UserCanGrade(request, drinkId);
 	if hasOrdered {
 		var userGradeDTO model.UserGradeDTO

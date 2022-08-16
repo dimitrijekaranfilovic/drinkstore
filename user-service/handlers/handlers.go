@@ -70,7 +70,6 @@ func authorize(writer http.ResponseWriter, request *http.Request, role string) {
 	token, err := extractJWT(request)
 
 	if err != nil || !token.Valid {
-		//fmt.Println(err.Error())
 		writer.WriteHeader(http.StatusForbidden)
 		return
 	}
@@ -99,7 +98,6 @@ func Authenticate(writer http.ResponseWriter, request *http.Request) {
 			writer.WriteHeader(http.StatusUnauthorized)
 			writeBadCredentials(writer)
 		} else {
-			//TODO: napravi token
 			token, err2 := generateJwt(&user)
 			if err2 != nil {
 				writeInternalServerError(writer, request, err2)
@@ -168,7 +166,6 @@ func GetUserIdFromJWT(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	token, err := extractJWT(request)
 	if err != nil || !token.Valid {
-		//fmt.Println(err.Error())
 		writer.WriteHeader(http.StatusForbidden)
 		json.NewEncoder(writer).Encode(model.UserIdDTO{UserId: -1})
 	} else {

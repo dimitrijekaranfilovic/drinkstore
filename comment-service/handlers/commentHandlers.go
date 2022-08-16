@@ -5,21 +5,21 @@ import (
 	"comment-service/util"
 	"context"
 	"encoding/json"
+	"errors"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"net/http"
-	"strconv"
-	"time"
-	"errors"
 )
 
 func (mongoHandler *MongoHandler) CreateComment(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	ctx, cancel := context.WithTimeout(request.Context(), time.Second*20)
 	defer cancel()
-	//TODO: pozovi purchase service
 	var dto model.CommentCreationDTO
 		_ = json.NewDecoder(request.Body).Decode(&dto)
 
