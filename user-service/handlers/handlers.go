@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 	"user-service/database"
@@ -15,8 +16,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//TODO: env variable
-var signingKey = []byte("signing_key")
 
 func RegisterUser(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
@@ -37,6 +36,15 @@ func RegisterUser(writer http.ResponseWriter, request *http.Request) {
 
 }
 
+func getJwtSigningKey() []byte {
+	jwtSigningKey := os.Getenv("JWT_SIGNING_KEY")
+	if jwtSigningKey == "" {
+		return []byte("signing_key")
+	} else {
+		return []byte(jwtSigningKey)
+	}
+}
+
 func extractJWT(request *http.Request) (*jwt.Token, error) {
 	authorizationHeader := request.Header.Get("Authorization")
 	if len(authorizationHeader) == 0 {
@@ -45,10 +53,11 @@ func extractJWT(request *http.Request) (*jwt.Token, error) {
 	if !strings.Contains(authorizationHeader, "Bearer") {
 		return nil, errors.New("Authorization header is not 'Bearer'.")
 	}
+
 	tokenString := authorizationHeader[7:]
 	token, err := jwt.ParseWithClaims(tokenString, &model.JwtClaims{},
 		func(t *jwt.Token) (interface{}, error) {
-			return signingKey, nil
+			return getJwtSigningKey(), nil
 		})
 
 	return token, err
@@ -125,7 +134,7 @@ func generateJwt(user *model.User) (string, error) {
 	claims["userId"] = user.Id
 	claims["iss"] = "ntp-user-service"
 
-	signedToken, err2 := token.SignedString(signingKey)
+	signedToken, err2 := token.SignedString(getJwtSigningKey())
 
 	if err != nil {
 		return "", err

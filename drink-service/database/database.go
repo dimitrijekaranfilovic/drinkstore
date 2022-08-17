@@ -4,6 +4,7 @@ import (
 	"drink-service/model"
 	"fmt"
 	"log"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -13,7 +14,37 @@ var Driver *gorm.DB
 var Err error
 
 func ConnectToDatabase() {
-	connectionString := "host=localhost user=postgres password=root dbname=ntp-drink-service port=5432 sslmode=disable"
+	//connectionString := "host=localhost user=postgres password=root dbname=ntp-drink-service port=5432 sslmode=disable"
+	databaseHost := os.Getenv("POSTGRES_HOST")
+	if databaseHost == "" {
+		databaseHost = "localhost"
+	} 
+
+	databaseUser := os.Getenv("POSTGRES_USER")
+	if databaseUser == "" {
+		databaseUser = "postgres"
+	} 
+
+
+	databasePassword := os.Getenv("POSTGRES_PASSWORD")
+	if databasePassword == "" {
+		databasePassword = "root"
+	} 
+
+	databaseName := os.Getenv("POSTGRES_DB")
+	if databaseName == "" {
+		databaseName = "ntp-drink-service"
+	} 
+
+	
+
+	//connectionString := "host=user-service-database user=postgres password=root dbname=ntp-user-service port=5432 sslmode=disable"
+	connectionString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable", 
+				databaseHost, 
+				databaseUser, 
+				databasePassword, 
+				databaseName)
+	
 	Driver, Err = gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 
 	if Err != nil {

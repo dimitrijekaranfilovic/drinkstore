@@ -63,13 +63,22 @@ pub struct DrinkSoldCount {
 
 
 
+pub fn create_database_connection() -> Client {
+  let postgres_user = option_env!("POSTGRES_USER").unwrap_or("postgres").to_string();
+  let postgres_password = option_env!("POSTGRES_PASSWORD").unwrap_or("root").to_string();
+  let postgres_db = option_env!("POSTGRES_DB").unwrap_or("ntp-purchase-service").to_string();
+  let postgres_host = option_env!("POSTGRES_HOST").unwrap_or("localhost").to_string();
+  
 
+  return Client::connect(format!("postgresql://{}:{}@{}:5432/{}", postgres_user, postgres_password, postgres_host, postgres_db).as_str(), NoTls).unwrap(); 
+
+}
 
 
 //Functions
 pub fn create_database() -> Result<(), Error> {
 
-    let mut db_client = Client::connect("postgresql://postgres:root@localhost:5432/ntp-purchase-service", NoTls)?; 
+    let mut db_client = create_database_connection(); 
     
     db_client.batch_execute("DROP TABLE IF EXISTS purchase_items")?;
     db_client.batch_execute("DROP TABLE IF EXISTS purchases")?;
@@ -105,7 +114,7 @@ pub fn create_database() -> Result<(), Error> {
 
 
 pub fn get_user_purchase_count_for_drink(user_id: i32, drink_id: i32) -> Result<String, Error> {
-    let mut db_client = Client::connect("postgresql://postgres:root@localhost:5432/ntp-purchase-service", NoTls)?; 
+    let mut db_client = create_database_connection(); 
     let mut num_purchases: i64 = 0;
     for _ in db_client.query("SELECT * FROM purchase_items WHERE user_id = $1 AND drink_id = $2", &[&user_id, &drink_id])? {
       num_purchases += 1;
@@ -118,7 +127,7 @@ pub fn get_user_purchase_count_for_drink(user_id: i32, drink_id: i32) -> Result<
 }
 
 pub fn create_purchase(purchase: rocket::serde::json::Json<PurchaseCreationDTO>) -> Result<String, Error> {
-    let mut db_client = Client::connect("postgresql://postgres:root@localhost:5432/ntp-purchase-service", NoTls)?; 
+    let mut db_client = create_database_connection(); 
     let user_id = purchase.user_id;
     let mut generated_id: i32 = 0;
     db_client.execute("INSERT INTO purchases (user_id) VALUES ($1)", &[&user_id])?;
@@ -138,7 +147,7 @@ pub fn create_purchase(purchase: rocket::serde::json::Json<PurchaseCreationDTO>)
 }
 
 pub fn get_user_purchase_history(user_id: i32) -> Result<String, Error> {
-    let mut db_client = Client::connect("postgresql://postgres:root@localhost:5432/ntp-purchase-service", NoTls)?; 
+    let mut db_client = create_database_connection(); 
     let mut purchase_history: Vec<PurchaseDTO> = Vec::new();
     for purchase_row in db_client.query("SELECT id from purchases WHERE user_id = $1", &[&user_id])? {
         let purchase_id: i32 = purchase_row.get(0);
@@ -194,7 +203,7 @@ pub fn get_most_sold_drinks(period: String) -> Result<String, Error> {
   
   
   
-  let mut db_client = Client::connect("postgresql://postgres:root@localhost:5432/ntp-purchase-service", NoTls)?; 
+  let mut db_client = create_database_connection(); 
   let mut most_sold: Vec<DrinkSoldCount> = Vec::new();
   for row in db_client.query("SELECT drink_id, SUM(num_items) as total_sold from purchase_items WHERE purchase_datetime >= $1 GROUP BY drink_id ORDER BY total_sold DESC", &[&iso_format_date])? {
     let drink_id: i32 = row.get(0);

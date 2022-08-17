@@ -10,10 +10,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
+
 func main() {
 	database.ConnectToDatabase()
 
-	port := "127.0.0.1:8082"
+	port := ":8082"
 
 	router := mux.NewRouter()
 	//svi

@@ -10,10 +10,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//TODO: provjeri komunikaciju sa ostalim servisima
+
 func main() {
 	database.ConnectToDatabase()
 
-	port := "127.0.0.1:8081"
+	port := ":8081"
 
 	router := mux.NewRouter()
 

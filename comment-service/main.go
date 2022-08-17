@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,11 +14,21 @@ import (
 )
 
 func main() {
+	databaseHost := os.Getenv("MONGO_HOST")
+	if databaseHost == "" {
+		databaseHost = "localhost"
+	} 
+
+	databaseName := os.Getenv("MONGO_DB")
+	if databaseName == "" {
+		databaseName = "ntp-comment-service"
+	} 
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	client, err := mongo.NewClient(
-		options.Client().ApplyURI("mongodb://localhost:27017"))
+		options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:27017", databaseHost)),
+	)
 	if err != nil {
 		log.Fatalf("Error creating mongo client: %+v", err)
 	}
@@ -27,11 +38,11 @@ func main() {
 	}
 
 	handler := handlers.MongoHandler{
-		CommentCollection: client.Database("ntp-comment-service").Collection("comments"),
-		ReportCollection:  client.Database("ntp-comment-service").Collection("reports"),
+		CommentCollection: client.Database(databaseName).Collection("comments"),
+		ReportCollection:  client.Database(databaseName).Collection("reports"),
 	}
 
-	port := "127.0.0.1:8083"
+	port := ":8083"
 	router := mux.NewRouter()
 
 	//user

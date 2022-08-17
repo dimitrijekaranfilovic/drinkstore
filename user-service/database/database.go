@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
+	"os"
 	"user-service/model"
 
 	"golang.org/x/crypto/bcrypt"
@@ -23,7 +24,36 @@ func HashPassword(password string) string {
 }
 
 func ConnectToDatabase() {
-	connectionString := "host=localhost user=postgres password=root dbname=ntp-user-service port=5432 sslmode=disable"
+	databaseHost := os.Getenv("POSTGRES_HOST")
+	if databaseHost == "" {
+		databaseHost = "localhost"
+	} 
+
+	databaseUser := os.Getenv("POSTGRES_USER")
+	if databaseUser == "" {
+		databaseUser = "postgres"
+	} 
+
+
+	databasePassword := os.Getenv("POSTGRES_PASSWORD")
+	if databasePassword == "" {
+		databasePassword = "root"
+	} 
+
+	databaseName := os.Getenv("POSTGRES_DB")
+	if databaseName == "" {
+		databaseName = "ntp-user-service"
+	} 
+
+	
+
+	//connectionString := "host=user-service-database user=postgres password=root dbname=ntp-user-service port=5432 sslmode=disable"
+	connectionString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable", 
+				databaseHost, 
+				databaseUser, 
+				databasePassword, 
+				databaseName)
+				
 	Driver, Err = gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 
 	if Err != nil {

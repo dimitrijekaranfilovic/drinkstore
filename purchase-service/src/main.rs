@@ -16,6 +16,7 @@ fn catch_internal_server_error() -> content::RawJson<String> {
 }
 
 
+//TODO: provjeri komunikaciju sa ostalim servisima
 
 //FUNCTIONAL METHODS
 
