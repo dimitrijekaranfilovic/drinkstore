@@ -112,3 +112,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9090:80"
+
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: nginx-setup-docker/
+      dockerfile: Dockerfile
+    ports:
+      - "9999:80"
