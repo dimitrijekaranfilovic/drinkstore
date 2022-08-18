@@ -22,6 +22,7 @@ if [[ "$start" == "local" ]];then
 
 else 
     echo "Starting system with docker containers..."
+    sudo service nginx stop
     gnome-terminal --tab  -- sudo docker start -a user-service-database
     gnome-terminal --tab  -- sudo docker start -a drink-service-database
     gnome-terminal --tab  -- sudo docker start -a comment-service-database
