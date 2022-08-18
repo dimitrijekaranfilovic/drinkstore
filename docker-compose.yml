@@ -1,83 +1,85 @@
 version: "3.7"
 services:
-  # user-service-database:
-  #   container_name: "user-service-database"
-  #   restart: always
-  #   image: postgres:alpine
-  #   environment:
-  #     - POSTGRES_DB=ntp-user-service
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=root
-  #   ports:
-  #     - "9091:5432"
+  user-service-database:
+    container_name: "user-service-database"
+    restart: always
+    image: postgres:alpine
+    environment:
+      - POSTGRES_DB=ntp-user-service
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+    ports:
+      - "9091:5432"
 
-  # user-service:
-  #   container_name: "user-service"
-  #   build:
-  #     context: user-service/
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - JWT_SIGNING_KEY=signing_key
-  #     - POSTGRES_DB=ntp-user-service
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=root
-  #     - POSTGRES_HOST=user-service-database
-  #   ports:
-  #     - "8081:8081"
-  #   depends_on:
-  #     - user-service-database
+  user-service:
+    container_name: "user-service"
+    build:
+      context: user-service/
+      dockerfile: Dockerfile
+    environment:
+      - JWT_SIGNING_KEY=signing_key
+      - POSTGRES_DB=ntp-user-service
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_HOST=user-service-database
+    ports:
+      - "8081:8081"
+    depends_on:
+      - user-service-database
 
-  # drink-service-database:
-  #   container_name: "drink-service-database"
-  #   restart: always
-  #   image: postgres:alpine
-  #   environment:
-  #     - POSTGRES_DB=ntp-drink-service
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=root
-  #   ports:
-  #     - "9092:5432"
+  drink-service-database:
+    container_name: "drink-service-database"
+    restart: always
+    image: postgres:alpine
+    environment:
+      - POSTGRES_DB=ntp-drink-service
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+    ports:
+      - "9092:5432"
 
-  # drink-service:
-  #   container_name: "drink-service"
-  #   build:
-  #     context: drink-service/
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - POSTGRES_DB=ntp-drink-service
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=root
-  #     - POSTGRES_HOST=drink-service-database
-  #     - USER_SERVICE_HOST=user-service
-  #     - PURCHASE_SERVICE_HOST=purchase-service
+  drink-service:
+    container_name: "drink-service"
+    build:
+      context: drink-service/
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_DB=ntp-drink-service
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_HOST=drink-service-database
+      - USER_SERVICE_HOST=user-service
+      - PURCHASE_SERVICE_HOST=purchase-service
 
-  #   ports:
-  #     - "8082:8082"
-  #   depends_on:
-  #     - drink-service-database
+    ports:
+      - "8082:8082"
+    depends_on:
+      - drink-service-database
 
-  # comment-service-database:
-  #   container_name: "comment-service-database"
-  #   image: mongo
-  #   restart: always
-  #   environment:
-  #     - MONGO_HOST=comment-service-database
-  #     - MONGO_DB=ntp-comment-service
-  #   ports:
-  #     - "9093:27017"
+  comment-service-database:
+    container_name: "comment-service-database"
+    image: mongo
+    restart: always
+    environment:
+      - MONGO_HOST=comment-service-database
+      - MONGO_DB=ntp-comment-service
+    ports:
+      - "9093:27017"
 
-  # comment-service:
-  #   container_name: "comment-service"
-  #   build:
-  #     context: comment-service/
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - POSTGRES_DB=ntp-comment-service
-  #     - MONGO_HOST=comment-service-database
-  #   ports:
-  #     - "8083:8083"
-  #   depends_on:
-  #     - comment-service-database
+  comment-service:
+    container_name: "comment-service"
+    build:
+      context: comment-service/
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_DB=ntp-comment-service
+      - MONGO_HOST=comment-service-database
+      - PURCHASE_SERVICE_HOST=purchase-service
+      - USER_SERVICE_HOST=user-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - comment-service-database
 
   purchase-service-database:
     container_name: "purchase-service-database"
@@ -102,3 +104,11 @@ services:
       - POSTGRES_HOST=purchase-service-database
     ports:
       - "8084:8084"
+
+  frontend:
+    container_name: frontend
+    build:
+      context: frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "9090:80"
