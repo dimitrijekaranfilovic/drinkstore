@@ -4,7 +4,6 @@ import (
 	"drink-service/database"
 	"drink-service/model"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -53,7 +52,6 @@ func GetDrinks(categories []string, volumeLabels []string, query string, gradeFr
 			gradeTo).
 		Find(&totalDrinks).Count(&totalItems)
 
-	fmt.Println("Total items: " + strconv.FormatInt(totalItems, 10))
 	return drinks, totalItems
 }
 

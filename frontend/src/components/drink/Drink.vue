@@ -206,11 +206,14 @@ export default {
     drinkService.getSingleDrink(this.$route.params.id).then((response) => {
       this.drink = response.data;
     });
-    drinkService.checkUserGrade(this.$route.params.id).then((response) => {
-      this.userGrade = response.data;
-      if (this.userGrade.gradeValue === -1)
-        this.userGrade.gradeValue = undefined;
-    });
+    if (this.userAuthority === "USER") {
+      drinkService.checkUserGrade(this.$route.params.id).then((response) => {
+        this.userGrade = response.data;
+        if (this.userGrade.gradeValue === -1)
+          this.userGrade.gradeValue = undefined;
+      });
+    }
+
     commentService
       .getCommentsForDrink(this.$route.params.id)
       .then((response) => {

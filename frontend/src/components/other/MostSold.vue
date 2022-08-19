@@ -64,7 +64,7 @@ export default {
             ds.find((drink) => drink.id === drinkId)["numberOfSales"] = sold;
           }
 
-          ds.sort((d1, d2) => d1.numberOfSales > d2.numberOfSales);
+          ds.sort((d1, d2) => d1.numberOfSales < d2.numberOfSales);
           this.drinks = [...ds];
         });
       });

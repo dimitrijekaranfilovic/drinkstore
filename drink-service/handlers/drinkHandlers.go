@@ -4,13 +4,14 @@ import (
 	"drink-service/model"
 	"drink-service/repository"
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 func GetSingleDrink(writer http.ResponseWriter, request *http.Request) {
@@ -125,7 +126,7 @@ func CreateUpdateDrinkImage(writer http.ResponseWriter, request *http.Request) {
 		if err2 != nil {
 			writeInternalServerError(writer, request, err2)
 		} else {
-			imagePath := "images/" + handler.Filename
+			imagePath := "images/" + strings.ReplaceAll(handler.Filename, " ", "-")
 			file, err3 := os.OpenFile(imagePath, os.O_WRONLY|os.O_CREATE, 0666)
 
 			if err3 != nil {
@@ -136,7 +137,7 @@ func CreateUpdateDrinkImage(writer http.ResponseWriter, request *http.Request) {
 				if drink.ImagePath != "" {
 					err4 := os.Remove(drink.ImagePath)
 					if err4 != nil {
-
+						writeInternalServerError(writer, request, err4)
 					}
 				}
 				drink.ImagePath = imagePath
