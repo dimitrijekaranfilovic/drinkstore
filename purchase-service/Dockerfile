@@ -13,8 +13,8 @@ ENV POSTGRES_HOST=purchase-service-database
 ENV ROCKET_ADDRESS=0.0.0.0
 ENV ROCKET_PORT=8084
 
-RUN cargo build
+RUN cargo build --release
 
 EXPOSE 8084
 
-CMD ["./target/debug/purchase-service"]
+CMD ["./target/release/purchase-service"]

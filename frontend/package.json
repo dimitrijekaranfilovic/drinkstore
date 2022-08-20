@@ -6,7 +6,8 @@
     "serve-proxy": "vue-cli-service serve  --port 9090 --mode proxy",
     "serve-no-proxy": "vue-cli-service serve --port 9090 --mode no-proxy",
     "build-proxy": "vue-cli-service build --mode proxy",
-    "build-no-proxy": "vue-cli-service build --mode no-proxy"
+    "build-no-proxy": "vue-cli-service build --mode no-proxy",
+    "build-docker": "vue-cli-service build --mode docker"
   },
   "dependencies": {
     "axios": "^0.26.1",

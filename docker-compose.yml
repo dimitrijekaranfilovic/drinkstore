@@ -8,8 +8,6 @@ services:
       - POSTGRES_DB=ntp-user-service
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-    ports:
-      - "9091:5432"
 
   user-service:
     container_name: "user-service"
@@ -22,8 +20,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
       - POSTGRES_HOST=user-service-database
-    ports:
-      - "8081:8081"
     depends_on:
       - user-service-database
 
@@ -35,8 +31,6 @@ services:
       - POSTGRES_DB=ntp-drink-service
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-    ports:
-      - "9092:5432"
 
   drink-service:
     container_name: "drink-service"
@@ -50,9 +44,6 @@ services:
       - POSTGRES_HOST=drink-service-database
       - USER_SERVICE_HOST=user-service
       - PURCHASE_SERVICE_HOST=purchase-service
-
-    ports:
-      - "8082:8082"
     depends_on:
       - drink-service-database
 
@@ -63,8 +54,6 @@ services:
     environment:
       - MONGO_HOST=comment-service-database
       - MONGO_DB=ntp-comment-service
-    ports:
-      - "9093:27017"
 
   comment-service:
     container_name: "comment-service"
@@ -76,8 +65,6 @@ services:
       - MONGO_HOST=comment-service-database
       - PURCHASE_SERVICE_HOST=purchase-service
       - USER_SERVICE_HOST=user-service
-    ports:
-      - "8083:8083"
     depends_on:
       - comment-service-database
 
@@ -89,8 +76,6 @@ services:
       - POSTGRES_DB=ntp-purchase-service
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-    ports:
-      - "9094:5432"
 
   purchase-service:
     container_name: "purchase-service"
@@ -102,8 +87,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
       - POSTGRES_HOST=purchase-service-database
-    ports:
-      - "8084:8084"
 
   frontend:
     container_name: frontend
@@ -116,7 +99,7 @@ services:
   api-gateway:
     container_name: api-gateway
     build:
-      context: nginx-setup-docker/
+      context: nginx/docker/
       dockerfile: Dockerfile
     ports:
       - "9999:80"
