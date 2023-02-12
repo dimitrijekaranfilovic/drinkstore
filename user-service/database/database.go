@@ -23,31 +23,20 @@ func HashPassword(password string) string {
 	return string(hashedBytePassword)
 }
 
+func GetEnvDefault(envName string, defaultValue string) string {
+	envValue := os.Getenv(envName);
+	if envValue == "" {
+		envValue = defaultValue;
+	}
+	return envValue;
+}
+
 func ConnectToDatabase() {
-	databaseHost := os.Getenv("POSTGRES_HOST")
-	if databaseHost == "" {
-		databaseHost = "localhost"
-	} 
-
-	databaseUser := os.Getenv("POSTGRES_USER")
-	if databaseUser == "" {
-		databaseUser = "postgres"
-	} 
-
-
-	databasePassword := os.Getenv("POSTGRES_PASSWORD")
-	if databasePassword == "" {
-		databasePassword = "root"
-	} 
-
-	databaseName := os.Getenv("POSTGRES_DB")
-	if databaseName == "" {
-		databaseName = "ntp-user-service"
-	} 
-
+	databaseHost := GetEnvDefault("USER_SERVICE_DATABASE_HOST", "localhost");
+	databaseUser := GetEnvDefault("USER_SERVICE_DATABASE_USER", "users");
+	databasePassword := GetEnvDefault("USER_SERVICE_DATABASE_PASSWORD", "secretpassword");
+	databaseName := GetEnvDefault("USER_SERVICE_DATABASE_NAME", "users");
 	
-
-	//connectionString := "host=user-service-database user=postgres password=root dbname=ntp-user-service port=5432 sslmode=disable"
 	connectionString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable", 
 				databaseHost, 
 				databaseUser, 

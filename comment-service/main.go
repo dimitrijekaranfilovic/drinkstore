@@ -2,27 +2,22 @@ package main
 
 import (
 	"comment-service/handlers"
+	"comment-service/util"
 	"context"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func main() {
-	databaseHost := os.Getenv("MONGO_HOST")
-	if databaseHost == "" {
-		databaseHost = "localhost"
-	} 
 
-	databaseName := os.Getenv("MONGO_DB")
-	if databaseName == "" {
-		databaseName = "ntp-comment-service"
-	} 
+
+func main() {
+	databaseHost := util.GetEnvDefault("MONGO_HOST", "localhost");
+	databaseName := util.GetEnvDefault("MONGO_DB", "ntp-comment-service");
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

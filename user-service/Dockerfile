@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 FROM golang:1.18-alpine3.15
 
 WORKDIR /app
@@ -19,4 +17,5 @@ RUN go build -o /user-service
 
 EXPOSE 8081
 
+# CMD ["../scripts/wait-for-it.sh", "ntp-database:5432",  "--" ,"/user-service"]
 CMD ["/user-service"]

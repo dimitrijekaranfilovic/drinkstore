@@ -1,6 +1,4 @@
 
-# syntax=docker/dockerfile:1
-
 FROM golang:1.18-alpine3.15
 
 WORKDIR /app
@@ -13,7 +11,8 @@ RUN go mod download
 COPY main.go ./
 COPY database/*.go ./database/
 COPY handlers/*.go ./handlers/
-COPY images/* ./images/
+# COPY images/* ./images/
+RUN mkdir images
 COPY model/*.go ./model/
 COPY repository/*.go ./repository/
 COPY util/*.go ./util/

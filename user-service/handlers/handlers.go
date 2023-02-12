@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 	"user-service/database"
@@ -37,12 +36,7 @@ func RegisterUser(writer http.ResponseWriter, request *http.Request) {
 }
 
 func getJwtSigningKey() []byte {
-	jwtSigningKey := os.Getenv("JWT_SIGNING_KEY")
-	if jwtSigningKey == "" {
-		return []byte("signing_key")
-	} else {
-		return []byte(jwtSigningKey)
-	}
+	return []byte (database.GetEnvDefault("JWT_SIGNING_KEY", "signing_key"));
 }
 
 func extractJWT(request *http.Request) (*jwt.Token, error) {

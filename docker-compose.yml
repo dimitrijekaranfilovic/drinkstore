@@ -1,92 +1,78 @@
 version: "3.7"
 services:
-  user-service-database:
-    container_name: "user-service-database"
-    restart: always
-    image: postgres:alpine
-    environment:
-      - POSTGRES_DB=ntp-user-service
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
+  ntp-database:
+    container_name: ntp-database
+    image: postgres:15
+    volumes: [./scripts/db:/docker-entrypoint-initdb.d]
+    env_file:
+      - variables.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ntp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
 
   user-service:
-    container_name: "user-service"
+    container_name: user-service
     build:
       context: user-service/
       dockerfile: Dockerfile
-    environment:
-      - JWT_SIGNING_KEY=signing_key
-      - POSTGRES_DB=ntp-user-service
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_HOST=user-service-database
+    ports:
+      - "8081:8081"
+    # command: ["./scripts/wait-for-it.sh", "ntp-database:5432", "--" ,"/user-service"]
+    env_file:
+      - variables.env
     depends_on:
-      - user-service-database
-
-  drink-service-database:
-    container_name: "drink-service-database"
-    restart: always
-    image: postgres:alpine
-    environment:
-      - POSTGRES_DB=ntp-drink-service
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
+      - ntp-database
 
   drink-service:
-    container_name: "drink-service"
+    container_name: drink-service
     build:
       context: drink-service/
       dockerfile: Dockerfile
-    environment:
-      - POSTGRES_DB=ntp-drink-service
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_HOST=drink-service-database
-      - USER_SERVICE_HOST=user-service
-      - PURCHASE_SERVICE_HOST=purchase-service
+    ports:
+      - "8082:8082"
+    # command: ["./scripts/wait-for-it.sh", "ntp-database:5432", "--" ,"/drink-service"]
+    env_file:
+      - variables.env
     depends_on:
-      - drink-service-database
+      - ntp-database
 
   comment-service-database:
-    container_name: "comment-service-database"
+    container_name: comment-service-database
     image: mongo
     restart: always
-    environment:
-      - MONGO_HOST=comment-service-database
-      - MONGO_DB=ntp-comment-service
+    ports:
+      - "27017:27017"
+    env_file:
+      - variables.env
 
   comment-service:
-    container_name: "comment-service"
+    container_name: comment-service
     build:
       context: comment-service/
       dockerfile: Dockerfile
-    environment:
-      - POSTGRES_DB=ntp-comment-service
-      - MONGO_HOST=comment-service-database
-      - PURCHASE_SERVICE_HOST=purchase-service
-      - USER_SERVICE_HOST=user-service
+    ports:
+      - "8083:8083"
+    # command: ["./scripts/wait-for-it.sh", "comment-service-database:27017", "--" ,"/comment-service"]
+    env_file:
+      - variables.env
     depends_on:
       - comment-service-database
 
-  purchase-service-database:
-    container_name: "purchase-service-database"
-    restart: always
-    image: postgres:alpine
-    environment:
-      - POSTGRES_DB=ntp-purchase-service
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
 
   purchase-service:
-    container_name: "purchase-service"
+    container_name: purchase-service
     build:
       context: purchase-service/
       dockerfile: Dockerfile
-    environment:
-      - POSTGRES_DB=ntp-purchase-service
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_HOST=purchase-service-database
+    # command: ["./scripts/wait-for-it.sh", "ntp-database:5432", "--" ,"./target/release/purchase-service"]
+    env_file:
+      - variables.env
+    depends_on:
+      - ntp-database
 
   frontend:
     container_name: frontend

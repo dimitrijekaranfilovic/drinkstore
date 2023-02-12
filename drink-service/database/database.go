@@ -13,32 +13,22 @@ import (
 var Driver *gorm.DB
 var Err error
 
+
+func GetEnvDefault(envName string, defaultValue string) string {
+	envValue := os.Getenv(envName);
+	if envValue == "" {
+		envValue = defaultValue;
+	}
+	return envValue;
+}
+
+
 func ConnectToDatabase() {
-	//connectionString := "host=localhost user=postgres password=root dbname=ntp-drink-service port=5432 sslmode=disable"
-	databaseHost := os.Getenv("POSTGRES_HOST")
-	if databaseHost == "" {
-		databaseHost = "localhost"
-	} 
-
-	databaseUser := os.Getenv("POSTGRES_USER")
-	if databaseUser == "" {
-		databaseUser = "postgres"
-	} 
-
-
-	databasePassword := os.Getenv("POSTGRES_PASSWORD")
-	if databasePassword == "" {
-		databasePassword = "root"
-	} 
-
-	databaseName := os.Getenv("POSTGRES_DB")
-	if databaseName == "" {
-		databaseName = "ntp-drink-service"
-	} 
-
+	databaseHost := GetEnvDefault("DRINK_SERVICE_DATABASE_HOST", "localhost");
+	databaseUser := GetEnvDefault("DRINK_SERVICE_DATABASE_USER", "drinks");
+	databasePassword := GetEnvDefault("DRINK_SERVICE_DATABASE_PASSWORD", "secretpassword");
+	databaseName := GetEnvDefault("DRINK_SERVICE_DATABASE_NAME", "drinks");
 	
-
-	//connectionString := "host=user-service-database user=postgres password=root dbname=ntp-user-service port=5432 sslmode=disable"
 	connectionString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable", 
 				databaseHost, 
 				databaseUser, 

@@ -64,10 +64,10 @@ pub struct DrinkSoldCount {
 
 
 pub fn create_database_connection() -> Client {
-  let postgres_user = option_env!("POSTGRES_USER").unwrap_or("postgres").to_string();
-  let postgres_password = option_env!("POSTGRES_PASSWORD").unwrap_or("root").to_string();
-  let postgres_db = option_env!("POSTGRES_DB").unwrap_or("ntp-purchase-service").to_string();
-  let postgres_host = option_env!("POSTGRES_HOST").unwrap_or("localhost").to_string();
+  let postgres_user = option_env!("PURCHASE_SERVICE_DATABASE_USER").unwrap_or("purchases").to_string();
+  let postgres_password = option_env!("PURCHASE_SERVICE_DATABASE_PASSWORD").unwrap_or("secretpassword").to_string();
+  let postgres_db = option_env!("PURCHASE_SERVICE_DATABASE_NAME").unwrap_or("purchases").to_string();
+  let postgres_host = option_env!("PURCHASE_SERVICE_DATABASE_HOST").unwrap_or("localhost").to_string();
   
 
   return Client::connect(format!("postgresql://{}:{}@{}:5432/{}", postgres_user, postgres_password, postgres_host, postgres_db).as_str(), NoTls).unwrap(); 
